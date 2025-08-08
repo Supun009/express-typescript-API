@@ -4,17 +4,20 @@ import AppError from "../utils/appError.js";
 import { HttpStatus } from "../constant/http.js";
 import appAssert from "../utils/appAssert.js";
 import { toUserDto } from "../dtos/userDto.js";
-import { createToken } from "../utils/jwt.js";
+import { createToken, refreshTokenSignOptions, type accessTokenPayload, type refreshTokenPayload } from "../utils/jwt.js";
+import Session from "../models/sesionModel.js";
 
 export type LoginUSerType  = {
     email: string;
     password: string;
+    userAgent?: string; 
 };
 
 export type RegisterUserType = {
     name: string;
     email: string;
     password: string;
+    
 } 
 
 export const loginUser = async (user: LoginUSerType) => {
@@ -29,12 +32,33 @@ export const loginUser = async (user: LoginUSerType) => {
         throw new AppError(HttpStatus.BAD_REQUEST,"Invalid password");
     }
 
-    const token = await createToken({ id: existingUser._id }, process.env.JWT_SECRET || "defaultSecret");
+    const session = await Session.create({
+        userId: existingUser._id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+        userAgent: user.userAgent || undefined, 
+    });
 
-    if (!token) {
-        appAssert(!token, HttpStatus.INTERNAL_SERVER_ERROR, "Token generation failed");
+    const accessTokenPayload : accessTokenPayload= {
+        userID: existingUser._id,
+        role: existingUser.role,
+    };
+
+    const refreshTokenPayload : refreshTokenPayload = {
+        sessionId: session._id,
+        userId: existingUser._id,
+    };
+
+
+
+    const accessToken =  createToken(accessTokenPayload );
+
+    const refreshToken =  createToken(refreshTokenPayload, refreshTokenSignOptions );
+
+
+    if (!accessToken || !refreshToken) {
+        appAssert(!accessToken || !refreshToken, HttpStatus.INTERNAL_SERVER_ERROR, "Token generation failed");
     }
-    return token;
+    return {accessToken, refreshToken};
     }
 
 export const registerUser = async(user:RegisterUserType)=> {

@@ -2,6 +2,7 @@ import z, { email } from "zod";
 import asyncHandler from "../utils/asyncHandler.js";
 import { loginUser, registerUser } from "../services/authService.js";
 import { HttpStatus } from "../constant/http.js";
+import { setCookies } from "../utils/cookies.js";
 
 const logi = z.object({
     name: z.string().min(1, "Name is required"),
@@ -28,15 +29,11 @@ export const login = asyncHandler(async(req, res)=> {
     const parsedData = logi.parse(req.body);
 
     if (parsedData) {
-        const token = await loginUser(parsedData);
-        res.cookie("token", token, {
-            httpOnly: true, 
-            secure: true,
-            sameSite: "none",
+        const {accessToken, refreshToken} = await loginUser(parsedData);
+        return setCookies({res, accessToken, refreshToken}).status(HttpStatus.OK).json({
+            message: "Login successful",
         });
-        return res.status(HttpStatus.OK).json({
-        message: "Login successful"
-    }); 
+      
     }
     
 });
