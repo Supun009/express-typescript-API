@@ -5,8 +5,7 @@ import { HttpStatus } from "../constant/http.js";
 import { setCookies } from "../utils/cookies.js";
 
 const logi = z.object({
-    name: z.string().min(1, "Name is required"),
-    email: z.string().email("Invalid email format"),
+    email: z.string().check(email("Invalid email format")),
     password: z.string().min(6, "Password must be at least 6 characters long"),
 }).refine((data => data.password.length >= 6), {
     message: "Password must be at least 6 characters long",
@@ -14,7 +13,7 @@ const logi = z.object({
 });
 
 const reg = z.object({
-    email: z.string().email("Invalid email format"),
+    email: z.string().check(email("Invalid email format")),
     name: z.string().min(1, "Name is required"),
     password: z.string().min(6, "Password must be at least 6 characters long"),
     confirmPassword: z.string().min(6, "Confirm Password must be at least 6 characters long"),
@@ -48,4 +47,5 @@ export const register = asyncHandler(async(req, res)=> {
         
         });
     }
+
 }); 

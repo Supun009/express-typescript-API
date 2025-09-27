@@ -1,11 +1,11 @@
 import { th } from "zod/locales";
-import User from "../models/userModel.js";
 import AppError from "../utils/appError.js";
 import { HttpStatus } from "../constant/http.js";
 import appAssert from "../utils/appAssert.js";
 import { toUserDto } from "../dtos/userDto.js";
 import { createToken, refreshTokenSignOptions, type accessTokenPayload, type refreshTokenPayload } from "../utils/jwt.js";
-import Session from "../models/sesionModel.js";
+import prisma from "../config/db.js";
+import { comparePassword, hashPassword } from "../utils/hashPassword.js";
 
 export type LoginUSerType  = {
     email: string;
@@ -21,31 +21,34 @@ export type RegisterUserType = {
 } 
 
 export const loginUser = async (user: LoginUSerType) => {
-    const existingUser = await User.findOne({ email: user.email });
+    const existingUser = await prisma.user.findUnique({
+        where: { email: user.email },
+    })
 
     if(!existingUser) {
         appAssert(existingUser, HttpStatus.NOT_FOUND, "User not found");
     }
-    const isPasswordMatch = await existingUser.matchPassword(user.password);
+    const isPasswordMatch = await comparePassword(user.password, existingUser.password);
 
     if (!isPasswordMatch) {
         throw new AppError(HttpStatus.BAD_REQUEST,"Invalid password");
     }
 
-    const session = await Session.create({
-        userId: existingUser._id,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-        userAgent: user.userAgent || undefined, 
+    const session = await prisma.session.create({
+        data: {
+            userId: existingUser.id,
+            userAgent: user.userAgent || "Unknown",
+        }   
     });
 
     const accessTokenPayload : accessTokenPayload= {
-        userID: existingUser._id,
+        userID: existingUser.id,
         role: existingUser.role,
     };
 
     const refreshTokenPayload : refreshTokenPayload = {
-        sessionId: session._id,
-        userId: existingUser._id,
+        sessionId: session.id,
+        userId: existingUser.id,
     };
 
 
@@ -61,17 +64,25 @@ export const loginUser = async (user: LoginUSerType) => {
     return {accessToken, refreshToken};
     }
 
+    
 export const registerUser = async(user:RegisterUserType)=> {
-    const existingUser = await User.findOne({ email: user.email });
+    const existingUser = await prisma.user.findUnique({
+        where: { email: user.email },
+    });
     if (existingUser)  {
         appAssert(!existingUser, HttpStatus.CONFLICT, "User already exists");
     }
 
-    const newUser = await User.create({
-        name: user.name,
-        email: user.email,
-        password: user.password,
-    }); 
+    const hashedPassword = await hashPassword(user.password);
+
+    const newUser = await prisma.user.create({
+        data: {
+            name: user.name,
+            email: user.email,
+            password: hashedPassword,
+            role: "USER",
+        },
+    });
 
     return toUserDto(newUser);
     

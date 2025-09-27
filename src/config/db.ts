@@ -1,17 +1,39 @@
-import mongoose, { mongo } from "mongoose";
-import { env } from "../constant/env.js";
+import { PrismaClient } from "../generated/prisma/index.js";
 
-export async function connectToDatabase() {
+const prisma = new PrismaClient();
+
+export default prisma;
+
+// export const connectDB = async () => {
+//   try {
+//     await prisma.$connect();
+//     console.log("Database connected");
+//   } catch (error) {
+//     console.log(error);
+//     process.exit(1);
+//   }
+// };
+
+export const connectDB = async (maxRetries = 3) => {
+  let retries = 0;
+  let connected = false;
+
+  while (!connected && retries < maxRetries) {
     try {
-     
-    const uri = env.MONGO_URI;
-        
-    await mongoose.connect(uri);
-
-    console.log('Connected to the database successfully');
+      await prisma.$connect();
+      console.log("Database connected");
+      connected = true;
     } catch (error) {
-            console.error('Error connecting to the database:', error);
-            process.exit(1); 
+      console.log(`Failed to connect to the database. Retrying... (${retries + 1}/${
+        maxRetries
+      })`);
+      retries++;
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait for 2 seconds before retrying
     }
-    
-}
+  }
+
+  if (!connected) {
+    console.log("Failed to connect to the database after multiple retries.");
+    process.exit(1);
+  }
+};

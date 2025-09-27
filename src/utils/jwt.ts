@@ -1,17 +1,16 @@
 import jwt, { type SignOptions } from 'jsonwebtoken';
-import type { UserDocument } from '../models/userModel.js';
-import type { SessionDocument } from '../models/sesionModel.js';
 import Roles from '../constant/roles.js';
 import { env } from '../constant/env.js';
+import AppError from './appError.js';
 
 export type accessTokenPayload = {
-    userID: UserDocument['_id'];
-    role: UserDocument['role'];
+    userID: String;
+    role: String;
 }
 
 export type refreshTokenPayload = {
-    sessionId: SessionDocument['_id'];
-    userId: UserDocument['_id'];
+    sessionId: String;
+    userId: String;
 }
 
 type SignOptionAndSecret = SignOptions &{
@@ -42,4 +41,24 @@ export const createToken =  (payload : accessTokenPayload | refreshTokenPayload,
         ...signOptions
     });
     
+}
+
+export const verifyToken = (accessToken: string, options?: SignOptionAndSecret) => {
+    const { secret } = options || accessTokenSignOptions;
+    try {
+        
+    const decoded =  jwt.verify(accessToken, secret);
+
+    if (decoded === null || typeof decoded === 'string') {
+        throw new AppError(401, "Invalid token");
+
+    }  
+    return decoded;
+    } catch (error) {
+        if (error instanceof jwt.TokenExpiredError) {
+            throw new AppError(401, "Token expired");
+        } else if (error instanceof jwt.JsonWebTokenError) {
+            throw new AppError(401, "Invalid token");
+        }
+    }
 }

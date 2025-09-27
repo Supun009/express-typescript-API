@@ -1,9 +1,10 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import { connectToDatabase } from './config/db.js';
+import { connectDB } from './config/db.js';
 import cors from 'cors';
 import errorHandler from './middlewares/globleErrorHandler.js';
 import authRouter from './routes/authRoute.js';
+import userRouter from './routes/userRoute.js';
 const app = express();
 const port = 3000;
 
@@ -20,6 +21,7 @@ app.use(cors({
   }));
 
   app.use('/api/auth', authRouter);
+  app.use('/api/user', userRouter);
 
 
 
@@ -28,5 +30,5 @@ app.use(errorHandler);
 
 app.listen(port, ()=> {
     console.log(`Server is running at http://localhost:${port}`);
-    connectToDatabase();
+    connectDB();
 });
