@@ -14,7 +14,7 @@ const defualt : CookieOptions = {
 
 }
 
-const getAccesstokenCookieOptions = () : CookieOptions => ({
+export const getAccesstokenCookieOptions = () : CookieOptions => ({
     ...defualt,
     maxAge: 15 * 60 * 1000, // 15 minutes
 }

@@ -1,8 +1,9 @@
 import z, { email } from "zod";
 import asyncHandler from "../utils/asyncHandler.js";
-import { loginUser, registerUser } from "../services/authService.js";
+import { loginUser, refreshAccessToken, registerUser } from "../services/authService.js";
 import { HttpStatus } from "../constant/http.js";
-import { setCookies } from "../utils/cookies.js";
+import { getAccesstokenCookieOptions, setCookies } from "../utils/cookies.js";
+import appAssert from "../utils/appAssert.js";
 
 const logi = z.object({
     email: z.string().check(email("Invalid email format")),
@@ -49,3 +50,17 @@ export const register = asyncHandler(async(req, res)=> {
     }
 
 }); 
+
+export const refresUserToken = asyncHandler(async(req, res) => {
+    const refreshToken = req.cookies?.refreshToken;
+
+    appAssert(refreshToken, HttpStatus.UNAUTHORIZED, "Refresh token not found");
+
+    const { accessToken, newRefreshToken } = await refreshAccessToken(refreshToken);
+
+    if (newRefreshToken) {
+        setCookies({ res, accessToken, refreshToken: newRefreshToken });
+    }
+
+    return res.status(HttpStatus.OK).cookie("accessToken", accessToken, getAccesstokenCookieOptions()).json({message: "Token refreshed"});
+});
