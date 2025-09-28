@@ -1,4 +1,3 @@
-import { th } from "zod/locales";
 import AppError from "../utils/appError.js";
 import { HttpStatus } from "../constant/http.js";
 import appAssert from "../utils/appAssert.js";
@@ -36,7 +35,7 @@ export const loginUser = async (user: LoginUSerType) => {
 
     const session = await prisma.session.create({
         data: {
-            userId: existingUser.id,
+            userId: existingUser.id,     
             userAgent: user.userAgent || "Unknown",
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
         }   
@@ -45,6 +44,7 @@ export const loginUser = async (user: LoginUSerType) => {
     const accessTokenPayload : accessTokenPayload= {
         userID: existingUser.id,
         role: existingUser.role,
+        sessionId: session.id,
     };
 
     const refreshTokenPayload : refreshTokenPayload = {
@@ -89,6 +89,18 @@ export const registerUser = async(user:RegisterUserType)=> {
     
 }   
 
+export const logoutUser = async(id: string) => {
+const sessionID = await prisma.session.findFirst({
+    where: { id },
+});
+
+appAssert(sessionID, HttpStatus.NOT_FOUND, "Session not found");
+
+await prisma.session.delete({
+    where: { id },
+});
+};
+
 export const refreshAccessToken = async (token: string)=> {
     const decoded = verifyToken(token, refreshTokenSignOptions);
 
@@ -115,7 +127,7 @@ export const refreshAccessToken = async (token: string)=> {
 
     const newRefreshToken = sessionNeedsUpdate ? createToken({ sessionId: session.id, userId: session.userId }, refreshTokenSignOptions) : undefined;
 
-    const accessToken = createToken({ userID: session.userId, role: "USER" });
+    const accessToken = createToken({ userID: session.userId, role: "USER" , sessionId: session.id});
 
     return { accessToken, newRefreshToken };
 }

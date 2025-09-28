@@ -4,13 +4,14 @@ import { env } from '../constant/env.js';
 import AppError from './appError.js';
 
 export type accessTokenPayload = {
-    userID: String;
-    role: String;
+    userID: string;
+    role: string;
+    sessionId: string;
 }
 
 export type refreshTokenPayload = {
-    sessionId: String;
-    userId: String;
+    sessionId: string;
+    userId: string;
 }
 
 type SignOptionAndSecret = SignOptions &{
