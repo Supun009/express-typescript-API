@@ -1,5 +1,6 @@
 
 export interface UserDto {
+  name: string;
   email: string;
   isVeryfies: boolean;
   role: string,
@@ -10,6 +11,7 @@ export interface UserDto {
 
 export const toUserDto = (user: UserDto): UserDto => {  
     return {
+        name: user.name,
         email: user.email,
         isVeryfies: user.isVeryfies,
         role: user.role,
