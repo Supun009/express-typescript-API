@@ -20,6 +20,12 @@ app.use(cors({
     credentials: true, // Allow cookies to be sent with requests
   }));
 
+  app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+ 
+  next();
+});
+
   app.use('/api/auth', authRouter);
   app.use('/api/user', userRouter);
 
