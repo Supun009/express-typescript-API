@@ -4,7 +4,7 @@ import { changePassword, getUser, updateUser } from "../controllers/userControll
 
 const userRouter = Router();
 
-userRouter.get("/", authMiddleware, getUser);
+userRouter.get("/profile", authMiddleware, getUser);
 
 userRouter.post("/update", authMiddleware, updateUser);
 

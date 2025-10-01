@@ -28,7 +28,7 @@ export const getUser = asyncHandler(async(req, res)=> {
 
     const userDto = toUserDto(user);
 
-    return res.status(200).json(userDto);
+    return res.status(HttpStatus.OK).json(userDto);
 });
 
 export const updateUser = asyncHandler(async(req, res) => {

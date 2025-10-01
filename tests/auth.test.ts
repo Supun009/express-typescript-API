@@ -9,12 +9,12 @@ describe("Authentication Tests", () => {
     let refreshToken: string | undefined;
     type ResetToken = { resetToken: string, id: string };
     let resetToken: ResetToken;
-    const testEmail = "test13@example.com";  
+    const testEmail = "test1@example.com";  
     const name = "Jone Doe";
-    const password = "password123";
-    const confirmPassword = "password123";
-    const newPassword = "newPassword123";
-    const newConfirmPassword = "newPassword123";
+    const password = "password";
+    const confirmPassword = "password";
+    const newPassword = "newPassword";
+    const newConfirmPassword = "newPassword";
 
     beforeAll(async () => {
         const response = await request(app)

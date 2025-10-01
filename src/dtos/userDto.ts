@@ -1,21 +1,18 @@
+import type { User } from "../types/userType.js";
 
 export interface UserDto {
   name: string;
   email: string;
   isVeryfies: boolean;
   role: string,
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 
-export const toUserDto = (user: UserDto): UserDto => {  
+export const toUserDto = (user: User): UserDto => {  
     return {
         name: user.name,
         email: user.email,
-        isVeryfies: user.isVeryfies,
+        isVeryfies: user.isVeryfied,
         role: user.role,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt
     }
 }
