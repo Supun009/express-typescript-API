@@ -20,7 +20,8 @@ model User {
   email     String    @unique
   password  String
   role      String    @default("USER")
-  isVeryfies Boolean   @default(false)
+  isVeryfied Boolean   @default(false)
+  isDeleted  Boolean   @default(false)
   sessions  Session[]
   passwordResets    PasswordReset[]
   createdAt DateTime  @default(now())
