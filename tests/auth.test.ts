@@ -14,7 +14,6 @@ describe("Authentication Tests", () => {
     const password = "password";
     const confirmPassword = "password";
     const newPassword = "newPassword";
-    const newConfirmPassword = "newPassword";
 
     beforeAll(async () => {
         const response = await request(app)
@@ -139,7 +138,7 @@ describe("Authentication Tests", () => {
                 token: resetToken.resetToken,
                 id: resetToken.id,
                 password: newPassword,
-                confirmPassword: newConfirmPassword,
+                confirmPassword: newPassword,
             }).expect(200);
 
         expect(response.body.message).toBe("Password has been reset successfully");
