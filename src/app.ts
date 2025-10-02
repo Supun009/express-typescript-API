@@ -5,7 +5,10 @@ import cors from 'cors';
 import errorHandler from './middlewares/globleErrorHandler.js';
 import authRouter from './routes/authRoute.js';
 import userRouter from './routes/userRoute.js';
+import { setupSwagger } from './../swagger.js';
 const app = express();
+
+setupSwagger(app);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

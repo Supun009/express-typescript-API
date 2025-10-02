@@ -8,8 +8,7 @@ import { comparePassword } from "../utils/hashPassword.js";
 
 const userData = z.object({
     name: z.string().min(1, "Name is required"),
-    email: z.string().check(email("Invalid email format")),
-}).refine((data) => data.name && data.email, {
+    }).refine((data) => data.name, {
     message: "At least one field (name or email) must be provided",
 });
 

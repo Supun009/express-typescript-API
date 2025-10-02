@@ -22,7 +22,7 @@ export async function getCurrentUser(userId: string)  {
     return user;
 }
 
-export async function updateUserInDb(userId: string, data: { name?: string; email?: string }) {
+export async function updateUserInDb(userId: string, data: { name: string}) {
 
     const user = await getCurrentUser(userId);
 

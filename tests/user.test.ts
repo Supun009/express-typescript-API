@@ -12,7 +12,6 @@ describe("User Tests", () => {
     const name = "Jone Doe";
     const updatedName = "UpdatedName";
     const password = "newPassword";
-    const confirmPassword = "newPassword";
     const newPassword = "newPassword1";
     const newConfirmPassword = "newPassword1";
 
@@ -72,12 +71,10 @@ describe("User Tests", () => {
             .set("Cookie", [`accessToken=${accessToken}`])
             .send({
                 name: updatedName,
-                email: testEmail,
             })
             .expect(200);
 
         expect(response.body).toBeDefined(); 
-        expect(response.body.email).toBe(testEmail);
         expect(response.body.name).toBe(updatedName);
     }); 
 
@@ -96,6 +93,5 @@ describe("User Tests", () => {
             })
             .expect(200);
 });
-
 
 });
