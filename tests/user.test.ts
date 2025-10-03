@@ -1,7 +1,6 @@
 import request from "supertest";
 import app from "../src/app.js";
 import { getCookies } from "./cookieHelper.js";
-import { email } from "zod";
 
 describe("User Tests", () => {
     let accessToken: string | undefined;

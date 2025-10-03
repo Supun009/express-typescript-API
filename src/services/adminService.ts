@@ -27,9 +27,11 @@ export const getUserById = async(userId: string)  => {
     const user = await prisma.user.findUnique({
         where: { id: userId },
         select: {
+            id: true,
             name: true,
             email: true,
             role: true,
+            isDeleted: true,
             isVerified: true,
             createdAt: true,
             updatedAt: true,
