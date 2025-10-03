@@ -2,7 +2,7 @@ export interface User {
     email: string;
     name: string;
     role: string;
-    isVeryfied: boolean;
+    isVerified: boolean;
     createdAt: Date;
     updatedAt: Date;
 }

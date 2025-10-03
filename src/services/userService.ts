@@ -11,7 +11,7 @@ export async function getCurrentUser(userId: string)  {
             name: true,
             email: true,
             role: true,
-            isVeryfied: true,
+            isVerified: true,
             createdAt: true,
             updatedAt: true,
         },

@@ -7,6 +7,7 @@ import prisma from "../config/db.js";
 import { comparePassword, hashPassword } from "../utils/hashPassword.js";
 import crypto from "crypto";
 import { compareToken, hashToken } from "../utils/hashToken.js";
+import Roles from "../constant/roles.js";
 
 
 export type LoginUSerType  = {
@@ -84,7 +85,7 @@ export const registerUser = async(user:RegisterUserType)=> {
             name: user.name,
             email: user.email,
             password: hashedPassword,
-            role: "USER",
+            role: Roles.USER,
         },
     });
 

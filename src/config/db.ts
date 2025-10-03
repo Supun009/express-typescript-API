@@ -4,15 +4,6 @@ const prisma = new PrismaClient();
 
 export default prisma;
 
-// export const connectDB = async () => {
-//   try {
-//     await prisma.$connect();
-//     console.log("Database connected");
-//   } catch (error) {
-//     console.log(error);
-//     process.exit(1);
-//   }
-// };
 
 export const connectDB = async (maxRetries = 3) => {
   let retries = 0;

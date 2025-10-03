@@ -6,7 +6,7 @@ import appAssert from "../utils/appAssert.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { comparePassword } from "../utils/hashPassword.js";
 
-const userData = z.object({
+export const userData = z.object({
     name: z.string().min(1, "Name is required"),
     }).refine((data) => data.name, {
     message: "At least one field (name or email) must be provided",

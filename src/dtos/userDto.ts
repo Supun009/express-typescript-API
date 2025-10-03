@@ -12,7 +12,7 @@ export const toUserDto = (user: User): UserDto => {
     return {
         name: user.name,
         email: user.email,
-        isVeryfies: user.isVeryfied,
+        isVeryfies: user.isVerified,
         role: user.role,
     }
 }

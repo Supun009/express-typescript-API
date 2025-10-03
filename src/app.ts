@@ -6,6 +6,7 @@ import errorHandler from './middlewares/globleErrorHandler.js';
 import authRouter from './routes/authRoute.js';
 import userRouter from './routes/userRoute.js';
 import { setupSwagger } from './../swagger.js';
+import adminRouter from './routes/adminRoute.js';
 const app = express();
 
 setupSwagger(app);
@@ -29,6 +30,7 @@ app.use(cors({
 
   app.use('/api/auth', authRouter);
   app.use('/api/user', userRouter);
+  app.use('/api/admin', adminRouter);
 
 
 

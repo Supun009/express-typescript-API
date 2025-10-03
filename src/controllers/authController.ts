@@ -42,9 +42,7 @@ export const login = asyncHandler(async(req, res)=> {
         return setCookies({res, accessToken, refreshToken}).status(HttpStatus.OK).json({
             message: "Login successful",
         });
-      
     }
-    
 });
 
 export const register = asyncHandler(async(req, res)=> {
