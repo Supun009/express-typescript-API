@@ -1,4 +1,4 @@
-import AppError from "../utils/appError.js";
+import AppError from "../utils/AppError.js";
 import { HttpStatus } from "../constant/http.js";
 import appAssert from "../utils/appAssert.js";
 import { toUserDto } from "../dtos/userDto.js";

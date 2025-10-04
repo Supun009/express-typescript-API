@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "start": "node dist/src/index.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles",
+    "clean": "rm -rf dist",
+    "build": "npx tsc"
   },
   "keywords": [],
   "author": "",

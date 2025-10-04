@@ -1,8 +1,8 @@
 import type { ErrorRequestHandler, Response } from "express";
 import { HttpStatus } from "../constant/http.js";
 import z from "zod";
-import { env } from "../constant/env.js";
-import AppError from "../utils/appError.js";
+
+import AppError from "../utils/AppError.js";
 
 const handleZodError = (error: z.ZodError, res : Response) => {
     console.log(`Zod Error: ${error.message}`);

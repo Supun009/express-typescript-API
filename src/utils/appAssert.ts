@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import AppError from "./appError.js";
+import AppError from "./AppError.js";
 import type { HttpStatus } from "../constant/http.js";
 
 type AppAssert = (

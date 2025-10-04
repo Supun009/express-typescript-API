@@ -1,7 +1,7 @@
 import jwt, { type SignOptions } from 'jsonwebtoken';
 import Roles from '../constant/roles.js';
 import { env } from '../constant/env.js';
-import AppError from './appError.js';
+import AppError from './AppError.js';
 
 export type accessTokenPayload = {
     userID: string;

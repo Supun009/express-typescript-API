@@ -51,7 +51,7 @@ userRouter.get("/profile", authMiddleware, getUser);
  *       200:
  *         description: User profile updated
  */
-userRouter.post("/update", authMiddleware, updateUser);
+userRouter.put("/update", authMiddleware, updateUser);
 
 /**
  * @swagger
