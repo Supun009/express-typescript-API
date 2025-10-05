@@ -111,7 +111,7 @@ authRouter.get("/refresh", refresUserToken);
  *       200:
  *         description: Password reset link sent to user email
  */
-authRouter.post("/reset-request", getResetToken);
+authRouter.post("/forgot-password", getResetToken);
 
 /**
  * @swagger

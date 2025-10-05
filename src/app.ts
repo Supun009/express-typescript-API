@@ -28,9 +28,9 @@ app.use(cors({
   next();
 });
 
-  app.use('/api/auth', authRouter);
-  app.use('/api/user', userRouter);
-  app.use('/api/admin', adminRouter);
+  app.use('/api/v1/auth', authRouter);
+  app.use('/api/v1/user', userRouter);
+  app.use('/api/v1/admin', adminRouter);
 
 
 

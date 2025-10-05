@@ -2,7 +2,7 @@
 
 This is a robust and scalable REST API boilerplate built with Node.js, Express.js, and TypeScript. It includes features like user authentication, role-based access control, and user management, making it a great starting point for your next backend project.
 
-## ✨ Features
+##  Features
 
 - **Authentication**: Secure user registration and login using JWT (JSON Web Tokens).
 - **Access & Refresh Tokens**: Implements a secure token-based authentication flow with access and refresh tokens stored in HTTP-only cookies.
@@ -40,30 +40,30 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 1.  **Clone the repository:**
     ```bash
-    git clone <your-repository-url>
-    cd typeScript-express-example
+    git clone https://github.com/Supun009/express-typescript-API.git
+    cd express-typescript-API
     ```
 
 2.  **Install dependencies:**
     ```bash
     npm install
-    # or
-    yarn install
     ```
+3.  **Set up environment variables:**
+    Create a `.env` file in the project root by copying the example file:
+    ```bash
+    cp .env.example .env
+    ```
+    Then, open the `.env` file and fill in your specific configuration details, such as your database connection string and secret keys.
 
-3.  **Run database migrations:**
+
+4.  **Run database migrations:**
     Make sure your PostgreSQL database server is running and the `DATABASE_URL` in your `.env` file is correct. Then, run the following command to apply the database schema:
     ```bash
     npx prisma migrate dev
     ```
     This will create the necessary tables in your database based on the schema defined in `prisma/schema.prisma`.
 
-4.  **Set up environment variables:**
-    Create a `.env` file in the project root by copying the example file:
-    ```bash
-    cp .env.example .env
-    ```
-    Then, open the `.env` file and fill in your specific configuration details, such as your database connection string and secret keys.
+
 
 ### Running the Application
 
@@ -87,7 +87,7 @@ Follow these instructions to get a copy of the project up and running on your lo
     npm run test
     ```
 
-The API will be available at `http://localhost:5000` (or the `PORT` you specified).
+The API will be available at `http://localhost:3000` (or the `PORT` you specified).
 
 ## 📝 API Endpoints
 
@@ -95,10 +95,9 @@ Here are the main API routes available:
 
 ### Auth Routes (`/api/v1/auth`)
 - `POST /register`: Register a new user.
-- `POST /verify-email`: Verify user's email with a token.
 - `POST /login`: Log in a user and receive tokens.
 - `POST /logout`: Log out the current user.
-- `POST /refresh-token`: Refresh an expired access token.
+- `POST /refresh`: Refresh an expired access token.
 - `POST /forgot-password`: Request a password reset email.
 - `POST /reset-password`: Reset password with a valid token.
 
