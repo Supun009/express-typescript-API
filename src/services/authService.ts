@@ -39,7 +39,8 @@ export const loginUser = async (user: LoginUSerType) => {
 
     const session = await prisma.session.create({
         data: {
-            userId: existingUser.id,     
+            userId: existingUser.id, 
+            role: existingUser.role,
             userAgent: user.userAgent || "Unknown",
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
         }   
@@ -131,7 +132,7 @@ export const refreshAccessToken = async (token: string)=> {
 
     const newRefreshToken = sessionNeedsUpdate ? createToken({ sessionId: session.id, userId: session.userId }, refreshTokenSignOptions) : undefined;
 
-    const accessToken = createToken({ userID: session.userId, role: "USER" , sessionId: session.id});
+    const accessToken = createToken({ userID: session.userId, role: session.role , sessionId: session.id});
 
     return { accessToken, newRefreshToken };
 }
