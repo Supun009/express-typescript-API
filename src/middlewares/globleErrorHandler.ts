@@ -27,10 +27,16 @@ const  errorHandler : ErrorRequestHandler = (error, req, res, next) => {
     } if (error instanceof AppError) {
         return handleAppError(error, res);
     }
-    res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+    if (process.env.NODE_ENV === "development") {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: "Internal Server Error",
         error: error.message,
     });
+    } else {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: "Internal Server Error"});
+    }
+    
 
 
 }
