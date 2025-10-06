@@ -5,7 +5,7 @@ const authRouter = Router();
 
 /**
  * @swagger
- * /api/auth/login:
+ * /api/v1/auth/login:
  *   post:
  *     summary: Login user
  *     tags: [Auth]
@@ -38,7 +38,7 @@ authRouter.post("/login", login);
 
 /**
  * @swagger
- * /api/auth/register:
+ * /api/v1/auth/register:
  *   post:
  *     summary: Register user
  *     tags: [Auth]
@@ -69,7 +69,7 @@ authRouter.post("/register", register);
 
 /**
  * @swagger
- * /api/auth/logout:
+ * /api/v1/auth/logout:
  *   post:
  *     summary: Logout user
  *     tags: [Auth]
@@ -81,7 +81,7 @@ authRouter.post("/logout", logout);
 
 /**
  * @swagger
- * /api/auth/refresh:
+ * /api/v1/auth/refresh:
  *   get:
  *     summary: Refresh user token
  *     tags: [Auth]
@@ -93,7 +93,7 @@ authRouter.get("/refresh", refresUserToken);
 
 /**
  * @swagger
- * /api/auth/reset-request:
+ * /api/v1/auth/forgot-password:
  *   post:
  *     summary: Send password reset link to user email
  *     tags: [Auth]
@@ -115,7 +115,7 @@ authRouter.post("/forgot-password", getResetToken);
 
 /**
  * @swagger
- * /api/auth/reset-password:
+ * /api/v1/auth/reset-password:
  *   post:
  *     summary: Reset user password
  *     tags: [Auth]

@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+
+  postgres-db:
+    image: postgres
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: mydb
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  node-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node-app 
+    restart: on-failure
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://postgres:mysecretpassword@postgres-db:5432/mydb
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres-db
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+
+volumes:
+  postgres-volume:
+    driver: local  
+
+    
+
+
+   

@@ -1,6 +1,6 @@
 # STAGE 1
 
-FROM node:alpine as builder
+FROM node:alpine AS builder
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ RUN npm run build
 
 # STAGE 2
 
-FROM node:alpine as production
+FROM node:alpine AS production
 
 WORKDIR /app
 
@@ -26,6 +26,8 @@ COPY --from=builder /app/dist ./dist
 
 COPY prisma ./prisma
 
+RUN npx prisma generate
+
 EXPOSE 3000
 
-CMD [ "node", "dist/index.js" ]
+CMD [ "node", "dist/src/index.js" ]

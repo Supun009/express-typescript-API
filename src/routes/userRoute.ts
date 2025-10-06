@@ -6,7 +6,7 @@ const userRouter = Router();
 
 /**
  * @swagger
- * /api/user/profile:
+ * /api/v1/user/profile:
  *   get:
  *     summary: Get user profile
  *     tags: [User]
@@ -31,7 +31,7 @@ userRouter.get("/profile", authMiddleware, getUser);
 
 /**
  * @swagger
- * /api/user/update:
+ * /api/v1/user/update:
  *   post:
  *     summary: Update user profile
  *     tags: [User]
@@ -55,7 +55,7 @@ userRouter.put("/update", authMiddleware, updateUser);
 
 /**
  * @swagger
- * /api/user/changepassword:
+ * /api/v1/user/changepassword:
  *   post:
  *     summary: Change user password
  *     tags: [User]

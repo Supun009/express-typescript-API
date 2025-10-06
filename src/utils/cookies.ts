@@ -23,7 +23,7 @@ export const getAccesstokenCookieOptions = () : CookieOptions => ({
 export const getRefreshTokenCookieOptions = () : CookieOptions => ({
     ...defualt,
     maxAge: 7 * 24 * 60 * 60 * 1000, 
-    path: '/api/auth/refresh', 
+    path: '/api/v1/auth/refresh', 
 }
 );
 
