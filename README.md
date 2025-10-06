@@ -79,7 +79,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 3.  **Run in development mode (with hot-reloading):**
     ```bash
-    npm run devb
+    npm run dev
     ```
 
 4.  **Run jest testing:**
@@ -88,6 +88,62 @@ Follow these instructions to get a copy of the project up and running on your lo
     ```
 
 The API will be available at `http://localhost:3000` (or the `PORT` you specified).
+
+### Running with Docker
+
+You can also run this application using Docker and Docker Compose.
+
+1.  **Prerequisites:**
+    *   [Docker](https://docs.docker.com/get-docker/)
+    *   [Docker Compose](https://docs.docker.com/compose/install/)
+
+2.  **Environment Variables:**
+    Our `docker-compose.yml` is set up for development and includes a PostgreSQL database service. However, you need to add your JWT secret keys to the `docker-compose.yml` file for the application to work.
+
+    Open the `docker-compose.yml` file and add the following environment variables to the `node-app` service:
+
+    ```yaml
+    services:
+      # ... (postgres-db service)
+      node-app:
+        # ... (build, container_name, etc.)
+        environment:
+          - NODE_ENV=development
+          -            DATABASE_URL=postgres://postgres:mysecretpassword@postgres-db:5432/mydb
+          - 
+        # ... (ports, depends_on, etc.)
+    ```
+
+    Replace `database url` with your own secret keys.
+
+3.  **Build and Run:**
+    Once you've configured the environment variables, you can build and run the application with a single command:
+
+    ```bash
+    docker-compose up --build -d
+    ```
+
+    This command will:
+    *   Build the Docker image for the Node.js application.
+    *   Start the PostgreSQL database and the application in detached mode (`-d`).
+    *   The API will be available at `http://localhost:3000`.
+
+4.  **Database Migrations:**
+    When the application starts, it will automatically connect to the database. To run the database migrations, you can execute the following command in a separate terminal:
+
+    ```bash
+    docker-compose exec node-app npx prisma migrate dev
+    ```
+
+5.  **Stopping the Application:**
+    To stop and remove the containers, run:
+
+    ```bash
+    docker-compose down
+    ```
+
+    The PostgreSQL data is stored in a Docker volume (`postgres-volume`), so your data will be preserved.
+
 
 ## 📝 API Endpoints
 
