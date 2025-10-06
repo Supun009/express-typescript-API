@@ -79,7 +79,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 3.  **Run in development mode (with hot-reloading):**
     ```bash
-    npm run dev
+    npm run devb
     ```
 
 4.  **Run jest testing:**
@@ -106,7 +106,7 @@ Here are the main API routes available:
 - `PUT /update`: Update the current user's profile.
 - `POST /changepassword`: Change the current user's password.
 
-### Admin Routes (`/api/v1/users`) - *Admin Only*
+### Admin Routes (`/api/v1/admin`) - *Admin Only*
 - `GET /users`: Get a list of all users (with pagination/filtering).
 - `GET users/:id`: Get a single user by ID.
 - `PUT users/:id`: Update a user's details (e.g., name, role).
