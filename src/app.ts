@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { type Response } from 'express';
 import cookieParser from 'cookie-parser';
 import { connectDB } from './config/db.js';
 import cors from 'cors';
@@ -8,8 +8,25 @@ import userRouter from './routes/userRoute.js';
 import { setupSwagger } from './../swagger.js';
 import adminRouter from './routes/adminRoute.js';
 import helmet from 'helmet';
+import { logger } from './../logger.js';
+import { pinoHttp } from 'pino-http';
 
 const app = express();
+
+app.use(
+  pinoHttp({
+    logger: logger,
+    customLogLevel: (req, res, err) => {
+      if (res?.statusCode >= 400 && res?.statusCode < 500) {
+        return 'warn';
+      }
+      if (res?.statusCode >= 500 || err) {
+        return 'error';
+      }
+      return 'info';
+    },
+  })
+);
 
 app.use(
   helmet({
@@ -96,8 +113,7 @@ app.use(cors({
   }));
 
   app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
- 
+  logger.info(`${new Date().toISOString().split('T')[0]} - ${req.method} ${req.originalUrl}`);
   next();
 });
 

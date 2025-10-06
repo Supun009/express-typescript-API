@@ -3,9 +3,10 @@ import { HttpStatus } from "../constant/http.js";
 import z from "zod";
 
 import AppError from "../utils/AppError.js";
+import { logger } from "../../logger.js";
 
 const handleZodError = (error: z.ZodError, res : Response) => {
-    console.log(`Zod Error: ${error.message}`);
+    logger.error(`Zod Error: ${error.message}`);
     return res.status(HttpStatus.BAD_REQUEST).json({
         message: "Validation Error",
         errors: error,
@@ -13,7 +14,7 @@ const handleZodError = (error: z.ZodError, res : Response) => {
 }
 
 const handleAppError = (error: AppError, res: Response) => {
-    console.log(`App Error: ${error.message}`);
+    logger.error(`App Error: ${error.message}`);
     return res.status(error.statusCode).json({
         message: error.message,
     });

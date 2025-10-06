@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { logger } from "../../logger.js";
 
 const prisma = new PrismaClient();
 
@@ -12,19 +13,18 @@ export const connectDB = async (maxRetries = 3) => {
   while (!connected && retries < maxRetries) {
     try {
       await prisma.$connect();
-      console.log("Database connected");
+      logger.info("Database connected");
       connected = true;
     } catch (error) {
-      console.log(`Failed to connect to the database. Retrying... (${retries + 1}/${
-        maxRetries
-      })`);
+      logger.info(`Failed to connect to the database. Retrying... (${retries + 1}/${maxRetries})`);
+      logger.error(error);
       retries++;
       await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait for 2 seconds before retrying
     }
   }
 
   if (!connected) {
-    console.log("Failed to connect to the database after multiple retries.");
+    logger.error("Failed to connect to the database after multiple retries.");
     process.exit(1);
   }
 };
