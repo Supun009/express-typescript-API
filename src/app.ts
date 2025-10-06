@@ -10,6 +10,8 @@ import adminRouter from './routes/adminRoute.js';
 import helmet from 'helmet';
 import { logger } from './../logger.js';
 import { pinoHttp } from 'pino-http';
+import { HttpStatus } from './constant/http.js';
+import prisma from './config/db.js';
 
 const app = express();
 
@@ -117,11 +119,46 @@ app.use(cors({
   next();
 });
 
+
+  app.get('/api/v1/health-check', async (req, res) => {
+    const uptime = process.uptime();
+    const uptimeString = `${Math.floor(uptime / (60 * 60 * 24))}d ${Math.floor(uptime % (60 * 60 * 24) / (60 * 60))}h ${Math.floor(uptime % (60 * 60)) / 60}m`;
+  
+    const checks = {
+      database: {
+        status: 'pass',
+        responseTime: '0ms',
+      },
+    };
+  
+    let overallStatus = 'pass';
+    let httpStatus = HttpStatus.OK;
+  
+    try {
+      const dbStart = Date.now();
+      await prisma.$queryRaw`SELECT 1`;
+      const dbEnd = Date.now();
+      checks.database.responseTime = `${dbEnd - dbStart}ms`;
+    } catch (e) {
+      checks.database.status = 'fail';
+      overallStatus = 'fail';
+      httpStatus = HttpStatus.SERVICE_UNAVAILABLE;
+      if (e instanceof Error) {
+          logger.error(`Health check failed: database connection error', ${e.message}`);
+      }
+    }
+  
+    res.status(httpStatus).json({
+      status: overallStatus,
+      version: '0.1.0',
+      uptime: uptimeString,
+      checks: checks,
+    });
+  });
+
   app.use('/api/v1/auth', authRouter);
   app.use('/api/v1/user', userRouter);
   app.use('/api/v1/admin', adminRouter);
-
-
 
 app.use(errorHandler);  
 

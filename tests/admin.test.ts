@@ -11,10 +11,10 @@ describe("Admin Tests", () => {
 
     beforeAll(async () => {
         const response = await request(app)
-            .post("/api/auth/login")
+            .post("/api/v1/auth/login")
             .send({
                 email: "admin@example.com",
-                password: "111111",
+                password: "newPassword1",
             })
             .expect(200);
 
@@ -36,7 +36,7 @@ describe("Admin Tests", () => {
 
     it("should get all not deleted users and populate userIds", async ()=> {
         const response = await request(app)
-            .get("/api/admin/users")
+            .get("/api/v1/admin/users")
             .set("Cookie", [`accessToken=${accessToken}`])
             .expect(200);
 
@@ -51,7 +51,7 @@ describe("Admin Tests", () => {
 
     it("should get user by id", async ()=> {
         const response = await request(app)
-            .get(`/api/admin/users/${userIds[0]}`)   
+            .get(`/api/v1/admin/users/${userIds[0]}`)   
             .set("Cookie", [`accessToken=${accessToken}`])
             .expect(200);
 
@@ -61,7 +61,7 @@ describe("Admin Tests", () => {
 
     it("should update user", async ()=> {
         const response = await request(app)
-            .put(`/api/admin/users/${userIds[0]}`)
+            .put(`/api/v1/admin/users/${userIds[0]}`)
             .set("Cookie", [`accessToken=${accessToken}`])
             .send({
                 name: updatedName,
@@ -74,7 +74,7 @@ describe("Admin Tests", () => {
 
     it("should delete users", async ()=> {
         const response = await request(app)
-            .delete("/api/admin/users/delete").
+            .delete("/api/v1/admin/users/delete").
             send({userIds: [userIds[0], userIds[1]]})
             .set("Cookie", [`accessToken=${accessToken}`])
             .expect(200);
@@ -85,11 +85,11 @@ describe("Admin Tests", () => {
 
     it("should delete a user", async ()=> {
         const response = await request(app)
-            .delete(`/api/admin/users/${userIds[0]}`)
+            .delete(`/api/v1/admin/users/${userIds[0]}`)
             .set("Cookie", [`accessToken=${accessToken}`])    
             .expect(200);
 
         expect(response.body).toBeDefined(); 
         expect(response.body.message).toBe("User deleted successfully");
     });
-});    
+});

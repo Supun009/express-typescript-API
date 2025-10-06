@@ -1,25 +1,28 @@
 import request from "supertest";
 import app from "../src/app.js";
 import { getCookies } from "./cookieHelper.js";
+import { testObject } from "./constant.js";
+
+
 
 describe("User Tests", () => {
     let accessToken: string | undefined;
     let refreshToken: string | undefined;
     type ResetToken = { resetToken: string, id: string };
     let resetToken: ResetToken;
-    const testEmail = "test1@example.com";  
-    const name = "Jone Doe";
+    // const testEmail = "test1@example.com";  
+    // const name = "Jone Doe";
     const updatedName = "UpdatedName";
-    const password = "newPassword";
+    // const password = "newPassword";
     const newPassword = "newPassword1";
     const newConfirmPassword = "newPassword1";
 
     beforeAll(async () => {
         const response = await request(app)
-            .post("/api/auth/login")
+            .post("/api/v1/auth/login")
             .send({
-                email: testEmail,
-                password: password,
+                email: testObject.testEmail,
+                password: testObject.newPassword,
             })
             .expect(200);
 
@@ -51,13 +54,13 @@ describe("User Tests", () => {
         }
 
         const response = await request(app)
-            .get("/api/user/profile")
+            .get("/api/v1/user/profile")
             .set("Cookie", [`accessToken=${accessToken}`])
             .expect(200);
 
         expect(response.body).toBeDefined(); 
-        expect(response.body.email).toBe(testEmail);
-        expect(response.body.name).toBe(name);
+        expect(response.body.email).toBe(testObject.testEmail);
+        expect(response.body.name).toBe(testObject.name);
     }); 
 
     it("should update user profile", async () => {
@@ -66,7 +69,7 @@ describe("User Tests", () => {
         }
 
         const response = await request(app)
-            .post("/api/user/update")
+            .put("/api/v1/user/update")
             .set("Cookie", [`accessToken=${accessToken}`])
             .send({
                 name: updatedName,
@@ -83,14 +86,14 @@ describe("User Tests", () => {
         }
 
         const response = await request(app)
-            .post("/api/user/changepassword")
+            .post("/api/v1/user/changepassword")
             .set("Cookie", [`accessToken=${accessToken}`])
             .send({
-                oldPassword: password,
+                oldPassword: testObject.newPassword,
                 newPassword: newPassword,
                 confirmNewPassword: newConfirmPassword,
             })
             .expect(200);
-});
+    });
 
 });

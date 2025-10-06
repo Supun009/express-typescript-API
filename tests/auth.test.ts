@@ -1,6 +1,8 @@
 import request from "supertest";
 import app from "../src/app.js";
 import { getCookies } from "./cookieHelper.js";
+import { testObject } from "./constant.js";
+
 
 
 
@@ -9,30 +11,30 @@ describe("Authentication Tests", () => {
     let refreshToken: string | undefined;
     type ResetToken = { resetToken: string, id: string };
     let resetToken: ResetToken;
-    const testEmail = "test1@example.com";  
-    const name = "Jone Doe";
-    const password = "password";
-    const confirmPassword = "password";
-    const newPassword = "newPassword";
+    // const testEmail = "supun@example.com";  
+    // const name = "Jone Doe";
+    // const password = "password";
+    // const confirmPassword = "password";
+    // const newPassword = "newPassword";
 
     beforeAll(async () => {
         const response = await request(app)
-            .post("/api/auth/register")
+            .post("/api/v1/auth/register")
             .send({
-                email: testEmail,
-                name: name,
-                password: password,
-                confirmPassword: confirmPassword,
+                email: testObject.testEmail,
+                name: testObject.name,
+                password: testObject.password,
+                confirmPassword: testObject.confirmPassword
             })
             .expect(201);
     });
 
     it("should login a user", async () => {
         const response = await request(app)
-            .post("/api/auth/login")
+            .post("/api/v1/auth/login")
             .send({
-                email: testEmail,
-                password: password,
+                email: testObject.testEmail,
+                password: testObject.password,
             })
             .expect(200);
 
@@ -59,7 +61,7 @@ describe("Authentication Tests", () => {
 
     it("should refresh user token", async () => {
         const response = await request(app)
-            .get("/api/auth/refresh")
+            .get("/api/v1/auth/refresh")
             .set("Cookie", [`refreshToken=${refreshToken}`])
             .expect(200);
         
@@ -80,7 +82,7 @@ describe("Authentication Tests", () => {
 
      it("should logout a user", async () => {
         const response = await request(app)
-            .post("/api/auth/logout")
+            .post("/api/v1/auth/logout")
             .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
             .expect(200);
 
@@ -89,10 +91,10 @@ describe("Authentication Tests", () => {
 
     it("should login a user", async () => {
         const response = await request(app)
-            .post("/api/auth/login")
+            .post("/api/v1/auth/login")
             .send({
-                email: testEmail,
-                password: password,
+                email: testObject.testEmail,
+                password: testObject.password,
             })
             .expect(200);
 
@@ -119,9 +121,9 @@ describe("Authentication Tests", () => {
 
     it("should get reset password token", async () => {
         const response = await request(app)
-            .post("/api/auth/reset-request")
+            .post("/api/v1/auth/forgot-password")
             .send({
-                email: testEmail,
+                email: testObject.testEmail,
             })
             .expect(200);
 
@@ -133,12 +135,12 @@ describe("Authentication Tests", () => {
 
     it("should reset password", async () => {
         const response = await request(app)
-            .post("/api/auth/reset-password")
+            .post("/api/v1/auth/reset-password")
             .send({
                 token: resetToken.resetToken,
                 id: resetToken.id,
-                password: newPassword,
-                confirmPassword: newPassword,
+                password: testObject.newPassword,
+                confirmPassword: testObject.newPassword,
             }).expect(200);
 
         expect(response.body.message).toBe("Password has been reset successfully");
