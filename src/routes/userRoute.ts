@@ -14,7 +14,7 @@ const userRouter = Router();
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: User profile
+ *         description: get User profile
  *         content:
  *           application/json:
  *             schema:
@@ -32,7 +32,7 @@ userRouter.get("/profile", authMiddleware, getUser);
 /**
  * @swagger
  * /api/v1/user/update:
- *   post:
+ *   put:
  *     summary: Update user profile
  *     tags: [User]
  *     security:
@@ -79,7 +79,7 @@ userRouter.put("/update", authMiddleware, updateUser);
  *                 example: newPassword
  *     responses:
  *       200:
- *         description: Password changed
+ *         description: Password changed successfully
  */
 userRouter.post("/changepassword", authMiddleware, changePassword);
 
