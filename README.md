@@ -98,7 +98,7 @@ You can also run this application using Docker and Docker Compose.
     *   [Docker Compose](https://docs.docker.com/compose/install/)
 
 2.  **Environment Variables:**
-    Our `docker-compose.yml` is set up for development and includes a PostgreSQL database service. However, you need to add your JWT secret keys to the `docker-compose.yml` file for the application to work.
+    Our `docker-compose.yml` is set up for development and includes a PostgreSQL database service.
 
     Open the `docker-compose.yml` file and add the following environment variables to the `node-app` service:
 

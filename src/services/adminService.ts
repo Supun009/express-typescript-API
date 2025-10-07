@@ -66,7 +66,6 @@ export const deleteUserById = async(userId: string) => {
 };  
 
 export const deleteUsers = async(userIds: string[]) => {
-console.log(userIds);
     await prisma.user.updateMany({
         where: { id: { in: userIds } },
         data: {
