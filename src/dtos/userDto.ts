@@ -3,7 +3,7 @@ import type { User } from "../types/userType.js";
 export interface UserDto {
   name: string;
   email: string;
-  isVeryfies: boolean;
+  isVeryfied: boolean;
   role: string,
 }
 
@@ -12,7 +12,7 @@ export const toUserDto = (user: User): UserDto => {
     return {
         name: user.name,
         email: user.email,
-        isVeryfies: user.isVerified,
+        isVeryfied: user.isVerified,
         role: user.role,
     }
 }

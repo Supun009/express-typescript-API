@@ -1,8 +1,7 @@
 import express, { type Response } from 'express';
 import cookieParser from 'cookie-parser';
-import { connectDB } from './config/db.js';
 import cors from 'cors';
-import errorHandler from './middlewares/globleErrorHandler.js';
+import errorHandler from './middlewares/globalErrorHandler.js';
 import authRouter from './routes/authRoute.js';
 import userRouter from './routes/userRoute.js';
 import { setupSwagger } from './../swagger.js';
