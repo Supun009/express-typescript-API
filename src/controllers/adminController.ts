@@ -1,6 +1,5 @@
 import { HttpStatus } from "../constant/http.js";
 import Roles from "../constant/roles.js";
-import { toUserDto } from "../dtos/userDto.js";
 import { toUserDtoAdmin } from "../dtos/userdtoAdmin.js";
 import { deleteUserById, deleteUsers, getAllUsers, getUserById, updateUserByAdmin } from "../services/adminService.js";
 import { successResponse } from "../utils/apiResponse.js";
