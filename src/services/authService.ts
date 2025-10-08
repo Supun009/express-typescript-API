@@ -288,7 +288,7 @@ export const resetUserPassword = async(tokenId: string, token: string, newPasswo
 
     await createAuditLog({
         userId: updatedUser.id,
-        action: AuditAction.PASSWORD_RESET,
+        action: AuditAction.PASSWORD_RESET_SUCCESS,
         status: "SUCCESS",
         ipAddress: context.ip || "Unknown",
         userAgent: context.userAgent || "Unknown",
