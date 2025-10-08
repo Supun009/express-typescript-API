@@ -1,6 +1,8 @@
 import prisma from "../config/db.js";
 import { HttpStatus } from "../constant/http.js";
 import appAssert from "../utils/appAssert.js";
+import type { RequestContext } from "../utils/requestContext.js";
+import { AuditAction, createAuditLog } from "./auditService.js";
 
 export const getAllUsers = async() => {
 
@@ -42,7 +44,7 @@ export const getUserById = async(userId: string)  => {
 };  
 
 
-export const updateUserByAdmin = async(userId: string, data: { name: string}) => {
+export const updateUserByAdmin = async(userId: string, data: { name: string}, context: RequestContext) => {
 
     const user = await getUserById(userId);
 
@@ -52,25 +54,51 @@ export const updateUserByAdmin = async(userId: string, data: { name: string}) =>
         where: { id: userId },
         data,
     });
+
+    await createAuditLog({
+        action: AuditAction.ADMIN_USER_UPDATE,
+        ipAddress: context.ip || "unknown",
+        userAgent: context.userAgent || "unknown",
+        status: "SUCCESS",
+    });
+
     return updatedUser;
 };
 
-export const deleteUserById = async(userId: string) => {
+export const deleteUserById = async(userId: string, context: RequestContext) => {
 
-   await prisma.user.update({
+  const deleted = await prisma.user.update({
         where: { id: userId },
         data: {
             isDeleted: true,
         },
     });
+
+    appAssert(deleted, HttpStatus.NOT_FOUND, "User not found");
+
+    await createAuditLog({
+        action: AuditAction.ADMIN_USER_DELETE,
+        ipAddress: context.ip || "unknown",
+        userAgent: context.userAgent || "unknown",
+        status: "SUCCESS",
+    })
 };  
 
-export const deleteUsers = async(userIds: string[]) => {
-    await prisma.user.updateMany({
+export const deleteUsers = async(userIds: string[], context: RequestContext) => {
+   const deleted =  await prisma.user.updateMany({
         where: { id: { in: userIds } },
         data: {
             isDeleted: true,
         },
+    });
+
+    appAssert(deleted, HttpStatus.NOT_FOUND, "Users not found");
+
+    await createAuditLog({
+        action: AuditAction.ADMIN_USER_DELETE,
+        ipAddress: context.ip || "unknown",
+        userAgent: context.userAgent || "unknown",
+        status: "SUCCESS",
     });
 };
 

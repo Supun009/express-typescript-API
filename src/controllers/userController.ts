@@ -4,6 +4,7 @@ import { toUserDto } from "../dtos/userDto.js";
 import { changeUserPassword, getCurrentUser, updateUserInDb } from "../services/userService.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { successResponse } from "../utils/apiResponse.js";
+import { getRequestContext } from "../utils/requestContext.js";
 
 export const userData = z.object({
     name: z.string().min(1, "Name is required"),
@@ -30,9 +31,11 @@ export const getUser = asyncHandler(async(req, res)=> {
 export const updateUser = asyncHandler(async(req, res) => {
     const userId = req.user.userID;
 
+    const context = getRequestContext(req);
+
     const parsedData = userData.parse(req.body);
 
-    const updatedUser = await updateUserInDb(userId, parsedData);
+    const updatedUser = await updateUserInDb(userId, parsedData, context);
 
     return successResponse(res, toUserDto(updatedUser), "User updated successfully", HttpStatus.OK);
 });
@@ -41,9 +44,11 @@ export const updateUser = asyncHandler(async(req, res) => {
 export const changePassword = asyncHandler(async(req, res) => {
     const userId = req.user.userID;
 
+    const context = getRequestContext(req);
+
     const parsedData = passwordSchema.parse(req.body);
 
-    await changeUserPassword(userId, parsedData);
+    await changeUserPassword(userId, parsedData, context);
 
     return successResponse(res, {}, "Password changed successfully", HttpStatus.OK);
 });

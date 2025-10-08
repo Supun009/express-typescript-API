@@ -2,6 +2,8 @@ import prisma from "../config/db.js";
 import { HttpStatus } from "../constant/http.js";
 import appAssert from "../utils/appAssert.js";
 import { comparePassword, hashPassword } from "../utils/hashPassword.js";
+import type { RequestContext } from "../utils/requestContext.js";
+import { AuditAction, createAuditLog } from "./auditService.js";
 
 export async function getCurrentUser(userId: string)  {
 
@@ -22,7 +24,7 @@ export async function getCurrentUser(userId: string)  {
     return user;
 }
 
-export async function updateUserInDb(userId: string, data: { name: string}) {
+export async function updateUserInDb(userId: string, data: { name: string}, context: RequestContext) {
 
     const user = await getCurrentUser(userId);
 
@@ -32,10 +34,19 @@ export async function updateUserInDb(userId: string, data: { name: string}) {
         where: { id: userId },
         data,
     });
+
+    await createAuditLog({
+        userId: updatedUser.id,
+        action: AuditAction.USER_UPDATE,
+        status: "SUCCESS",
+        ipAddress: context.ip || 'unknown',
+        userAgent: context.userAgent || 'unknown',
+    });
+
     return updatedUser;
 }
 
-export async function changeUserPassword(userId: string, data :{oldPassword: string, newPassword: string}) {
+export async function changeUserPassword(userId: string, data :{oldPassword: string, newPassword: string}, context: RequestContext) {
     const user = await prisma.user.findUnique({
         where: { id: userId },
     });
@@ -56,5 +67,14 @@ export async function changeUserPassword(userId: string, data :{oldPassword: str
         where: { id: userId },
         data: { password: hashedPassword },
     });
+
+    await createAuditLog({
+        userId: updatedUser.id,
+        action: AuditAction.PASSWORD_CHANGE_SUCCESS,
+        status: "SUCCESS",
+        ipAddress: context.ip || 'unknown',
+        userAgent: context.userAgent || 'unknown',
+    });
+
     return updatedUser;
 }

@@ -5,6 +5,7 @@ import { deleteUserById, deleteUsers, getAllUsers, getUserById, updateUserByAdmi
 import { successResponse } from "../utils/apiResponse.js";
 import appAssert from "../utils/appAssert.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import { getRequestContext } from "../utils/requestContext.js";
 import { userData } from "./userController.js";
 
 export const getUsersAdmin = asyncHandler(async(req, res) => {
@@ -35,11 +36,13 @@ export const updateUserAdmin = asyncHandler(async(req, res) => {
     const userRole = req.user.role;
     const userId = req.params.id;
 
+    const context = getRequestContext(req);
+
     appAssert(userRole === Roles.ADMIN && userId, HttpStatus.UNAUTHORIZED, "Unauthorized access");
 
     const parsedData = userData.parse(req.body);
 
-    const updatedUser =  await updateUserByAdmin(userId, parsedData);
+    const updatedUser =  await updateUserByAdmin(userId, parsedData, context);
 
     appAssert(updatedUser, HttpStatus.NOT_FOUND, "User not found");
 
@@ -49,9 +52,12 @@ export const updateUserAdmin = asyncHandler(async(req, res) => {
 export const deleteUserAdmin = asyncHandler(async(req, res) => {
     const userRole = req.user.role;
     const userId = req.params.id;
+
+    const context = getRequestContext(req);
+
     appAssert(userRole === Roles.ADMIN && userId, HttpStatus.UNAUTHORIZED, "Unauthorized access");
 
-    await deleteUserById(userId);
+    await deleteUserById(userId, context);
 
     return successResponse(res, {}, "User deleted successfully", HttpStatus.OK);
 });
@@ -60,9 +66,11 @@ export const deleteUsersAdmin = asyncHandler(async(req, res) => {
     const userRole = req.user.role;
     const userIds : string[] = req.body.userIds;
 
+    const context = getRequestContext(req);
+
     appAssert(userRole === Roles.ADMIN && userIds, HttpStatus.UNAUTHORIZED, "Unauthorized access");
 
-    await deleteUsers(userIds); 
+    await deleteUsers(userIds, context); 
 
     return successResponse(res, {}, "Users deleted successfully", HttpStatus.OK);
 });
