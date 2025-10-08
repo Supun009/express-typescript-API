@@ -8,18 +8,21 @@ import { comparePassword, hashPassword } from "../utils/hashPassword.js";
 import crypto from "crypto";
 import { compareToken, hashToken } from "../utils/hashToken.js";
 import Roles from "../constant/roles.js";
+import { AuditAction, createAuditLog } from "./auditService.js";
+import type { RequestContext } from "../utils/requestContext.js";
 
 
 export type LoginUSerType  = {
     email: string;
     password: string;
-    userAgent?: string; 
+    reqContext?: RequestContext; 
 };
 
 export type RegisterUserType = {
     name: string;
     email: string;
     password: string;
+    reqContext: RequestContext
     
 } 
 
@@ -29,11 +32,26 @@ export const loginUser = async (user: LoginUSerType) => {
     })
 
     if(!existingUser) {
+        await createAuditLog({action: AuditAction.LOGIN_FAILED,
+            status: "FAILURE",
+            errorMessage: "User not found",
+            ipAddress: user.reqContext?.ip || "Unknown",
+            userAgent: user.reqContext?.userAgent || "Unknown"
+            });
+
         appAssert(existingUser, HttpStatus.NOT_FOUND, "User not found");
     }
     const isPasswordMatch = await comparePassword(user.password, existingUser.password);
 
     if (!isPasswordMatch) {
+        await createAuditLog({
+                userId: existingUser.id,
+                action: AuditAction.LOGIN_FAILED,
+                ipAddress: user.reqContext?.ip || 'unknown',
+                userAgent: user.reqContext?.userAgent || 'unknown',
+                status: "FAILURE",
+                errorMessage: "Invalid password",
+            });
         throw new AppError(HttpStatus.BAD_REQUEST,"Invalid password");
     }
 
@@ -41,7 +59,7 @@ export const loginUser = async (user: LoginUSerType) => {
         data: {
             userId: existingUser.id, 
             role: existingUser.role,
-            userAgent: user.userAgent || "Unknown",
+            userAgent: user.reqContext?.userAgent || "Unknown",
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
         }   
     });
@@ -67,6 +85,14 @@ export const loginUser = async (user: LoginUSerType) => {
     if (!accessToken || !refreshToken) {
         appAssert(!accessToken || !refreshToken, HttpStatus.INTERNAL_SERVER_ERROR, "Token generation failed");
     }
+    await createAuditLog({
+            userId: existingUser.id,
+            sessionId: session.id,
+            action: AuditAction.LOGIN_SUCCESS,
+            ipAddress: user.reqContext?.ip || 'unknown',
+            userAgent: user.reqContext?.userAgent || 'unknown',
+            status: "SUCCESS",
+        });
     return {accessToken, refreshToken};
     }
 
@@ -76,6 +102,13 @@ export const registerUser = async(user:RegisterUserType)=> {
         where: { email: user.email },
     });
     if (existingUser)  {
+        await createAuditLog({
+            action: AuditAction.REGISTER,
+            status: "FAILURE",
+            errorMessage: "User already exists",
+            ipAddress: user.reqContext?.ip || "Unknown",
+            userAgent: user.reqContext?.userAgent || "Unknown",
+        });
         appAssert(!existingUser, HttpStatus.CONFLICT, "User already exists");
     }
 
@@ -90,23 +123,47 @@ export const registerUser = async(user:RegisterUserType)=> {
         },
     });
 
+    await createAuditLog({
+        action: AuditAction.REGISTER,
+        status: "SUCCESS",
+        ipAddress: user.reqContext?.ip || "Unknown",
+        userAgent: user.reqContext?.userAgent || "Unknown",
+    });
+
     return toUserDto(newUser);
     
 }   
 
-export const logoutUser = async(id: string) => {
-const sessionID = await prisma.session.findFirst({
-    where: { id },
-});
+export const logoutUser = async(id: string, ip?: string, userAgent?: string) => {
+    const sessionID = await prisma.session.findFirst({
+        where: { id },
+    });
 
-appAssert(sessionID, HttpStatus.NOT_FOUND, "Session not found");
+    if (!sessionID) {
+        await createAuditLog({
+            action: AuditAction.LOGOUT_FAILD,
+            status: "FAILURE",
+            ipAddress: ip || "Unknown",
+            userAgent: userAgent || "Unknown",   
+        });   
+    }
+        
 
-await prisma.session.delete({
-    where: { id },
-});
+    appAssert(sessionID, HttpStatus.NOT_FOUND, "Session not found");
+
+    await prisma.session.delete({
+        where: { id },
+    });
+
+    await createAuditLog({
+            action: AuditAction.LOGOUT,
+            status: "SUCCESS",
+            ipAddress: ip || "Unknown",
+            userAgent: userAgent || "Unknown",  
+        });
 };
 
-export const refreshAccessToken = async (token: string)=> {
+export const refreshAccessToken = async (token: string, context: RequestContext)=> {
     const decoded = verifyToken(token, refreshTokenSignOptions);
 
     appAssert(decoded, HttpStatus.UNAUTHORIZED, "Invalid refresh token");
@@ -134,10 +191,19 @@ export const refreshAccessToken = async (token: string)=> {
 
     const accessToken = createToken({ userID: session.userId, role: session.role , sessionId: session.id});
 
+    await createAuditLog({
+        userId: session.userId,
+        sessionId: session.id,
+        action: AuditAction.TOKEN_REFRESH,
+        status: "SUCCESS",
+        ipAddress: context.userAgent || "Unknown",
+        userAgent: context.userAgent || "Unknown",
+    });
+
     return { accessToken, newRefreshToken };
 }
 
-export const createResetToken = async(email: string) => {
+export const createResetToken = async(email: string, reqContext?: RequestContext) => {
     const user = await prisma.user.findUnique({
         where: { email },
     });
@@ -159,11 +225,18 @@ export const createResetToken = async(email: string) => {
         },
     });
 
+    await createAuditLog({
+        userId: user.id,
+        action: AuditAction.PASSWORD_RESET_REQUEST,
+        status: "SUCCESS",
+        ipAddress: reqContext?.ip || "Unknown",
+        userAgent: reqContext?.userAgent || "Unknown",
+    });
 
     return  {id:passwordReset.id, resetToken};
 }
 
-export const verifyResetToken = async(token: string, id: string): Promise<string> => {
+export const verifyResetToken = async(token: string, id: string, context: RequestContext): Promise<string> => {
     const passwordReset = await prisma.passwordReset.findFirst({
         where: { id },
         orderBy: { createdAt: "desc" },
@@ -175,10 +248,18 @@ export const verifyResetToken = async(token: string, id: string): Promise<string
 
     appAssert(isTokenValid, HttpStatus.UNAUTHORIZED, "Invalid or expired reset token");
 
+    await createAuditLog({
+        userId: passwordReset.userId,
+        action: AuditAction.PASSWORD_RESET_VERIFY,
+        status: "SUCCESS",
+        ipAddress: context.ip || "Unknown",
+        userAgent: context.userAgent || "Unknown",
+    });
+
     return token;
 }
 
-export const resetUserPassword = async(tokenId: string, token: string, newPassword: string) => {
+export const resetUserPassword = async(tokenId: string, token: string, newPassword: string, context: RequestContext) => {
 
     const passwordReset = await prisma.passwordReset.findFirst({
         where: { id: tokenId },
@@ -203,6 +284,14 @@ export const resetUserPassword = async(tokenId: string, token: string, newPasswo
 
     await prisma.session.deleteMany({
         where: { userId: updatedUser.id },
+    });
+
+    await createAuditLog({
+        userId: updatedUser.id,
+        action: AuditAction.PASSWORD_RESET,
+        status: "SUCCESS",
+        ipAddress: context.ip || "Unknown",
+        userAgent: context.userAgent || "Unknown",
     });
 
     return updatedUser;

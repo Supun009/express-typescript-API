@@ -6,6 +6,7 @@ import { getAccesstokenCookieOptions, getRefreshTokenCookieOptions, setCookies }
 import appAssert from "../utils/appAssert.js";
 import { verifyToken, type accessTokenPayload } from "../utils/jwt.js";
 import { createdResponse, successResponse } from "../utils/apiResponse.js";
+import { getRequestContext } from "../utils/requestContext.js";
 
 const logi = z.object({
     email: z.string().check(email("Invalid email format")),
@@ -38,8 +39,10 @@ const reg = z.object({
 export const login = asyncHandler(async(req, res)=> {
     const parsedData = logi.parse(req.body);
 
+    const context = getRequestContext(req);
+
     if (parsedData) {
-        const {accessToken, refreshToken} = await loginUser(parsedData);
+        const {accessToken, refreshToken} = await loginUser({...parsedData, reqContext: context} );
         
         setCookies({res, accessToken, refreshToken});
 
@@ -50,8 +53,10 @@ export const login = asyncHandler(async(req, res)=> {
 export const register = asyncHandler(async(req, res)=> {
     const parsedData = reg.parse(req.body);
 
+        const context = getRequestContext(req);
+
     if (parsedData) {
-        await registerUser(parsedData);
+        await registerUser({...parsedData, reqContext: context});
         return successResponse(res, {}, "Registration successful", HttpStatus.CREATED);
     }
 
@@ -60,11 +65,13 @@ export const register = asyncHandler(async(req, res)=> {
 export const logout = asyncHandler(async(req, res)=> {
     const accessToken = req.cookies?.accessToken;
 
+    const context = getRequestContext(req);
+
     appAssert(accessToken, HttpStatus.UNAUTHORIZED, "User not authenticated");
 
     const decoded = verifyToken(accessToken) as accessTokenPayload;
 
-    await logoutUser(decoded.sessionId);
+    await logoutUser(decoded.sessionId, context.ip, context.userAgent);
 
     res.clearCookie("accessToken", getAccesstokenCookieOptions()).
     clearCookie("refreshToken", getRefreshTokenCookieOptions());
@@ -75,9 +82,11 @@ export const logout = asyncHandler(async(req, res)=> {
 export const refresUserToken = asyncHandler(async(req, res) => {
     const refreshToken = req.cookies?.refreshToken;
 
+    const context = getRequestContext(req);
+
     appAssert(refreshToken, HttpStatus.UNAUTHORIZED, "Refresh token not found");
 
-    const { accessToken, newRefreshToken } = await refreshAccessToken(refreshToken);
+    const { accessToken, newRefreshToken } = await refreshAccessToken(refreshToken, context);
 
     if (newRefreshToken) {
         setCookies({ res, accessToken, refreshToken: newRefreshToken });
@@ -92,9 +101,11 @@ export const refresUserToken = asyncHandler(async(req, res) => {
 export const getResetToken = asyncHandler(async(req, res) => {
     const {email} = req.body;
 
+    const context = getRequestContext(req);
+
     appAssert(email, HttpStatus.BAD_REQUEST, "Email is required");
 
-    const token = await createResetToken(email);
+    const token = await createResetToken(email, context);
 
     return successResponse(res, token, "Reset token created successfully", HttpStatus.CREATED);
 });
@@ -103,11 +114,13 @@ export const getResetToken = asyncHandler(async(req, res) => {
 export const resetPassword = asyncHandler(async(req, res) => {
     const {token, id} = req.body;
 
+    const context = getRequestContext(req);
+
     appAssert(token && typeof token === "string" && id && typeof id === "string", HttpStatus.BAD_REQUEST, "Token and id are required");
 
     const parsedData = passwordSchema.parse(req.body);
 
-    await resetUserPassword( id, token, parsedData.password);
+    await resetUserPassword( id, token, parsedData.password, context);
 
     res.clearCookie("accessToken", getAccesstokenCookieOptions()).
     

@@ -11,6 +11,7 @@ import { logger } from './../logger.js';
 import { pinoHttp } from 'pino-http';
 import { HttpStatus } from './constant/http.js';
 import prisma from './config/db.js';
+import { requestLogger } from './middlewares/requestLogger.js';
 
 const app = express();
 
@@ -28,6 +29,8 @@ app.use(
     },
   })
 );
+
+app.use(requestLogger);
 
 app.use(
   helmet({
