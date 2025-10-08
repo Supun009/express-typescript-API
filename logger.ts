@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { env } from './src/constant/env.js';
 
 // 1. Reconstruct __filename (absolute path to the current file)
 const __filename = fileURLToPath(import.meta.url);
@@ -10,8 +11,8 @@ const __filename = fileURLToPath(import.meta.url);
 // 2. Reconstruct __dirname (absolute path to the current directory)
 const __dirname = dirname(__filename);
 
-const isDevelopment = process.env.NODE_ENV === 'development'
-const isTest = process.env.NODE_ENV === 'test'
+const isDevelopment = env.NODE_ENV === 'development';
+const isTest = env.NODE_ENV === 'test';
 
 const logDirectory = path.join(__dirname, 'logs'); // Adjust path as needed
 if (!isDevelopment && !isTest) {
@@ -32,13 +33,11 @@ export const logger = pino({
             colorize: true,
         },
     } : {
-    targets: [
-        { target: 'pino/file', options: { destination: path.join(logDirectory, 'app.log') } },
-        ],
-       options: {
-            destination: path.join(logDirectory, 'app.log'),
-        },
-    },
+        target: 'pino/file',
+        options: {
+             destination: path.join(logDirectory, 'app.log')
+        }},
+        
     timestamp: pino.stdTimeFunctions.isoTime,
     base: {
         pid: false,}
