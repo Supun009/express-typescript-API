@@ -71,13 +71,13 @@ export const errorResponse = (
   res: Response,
   message: string,
   statusCode: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
-  errors: Array<{ field?: string; message: string }>,
+  errors?: Array<{ field?: string; message: string }>,
   meta?: Record<string, any>
 ): Response => {
   const response: ApiResponse = {
     success: false,
     message,
-    errors,
+    errors: errors || [],
     meta: {
       timestamp: new Date().toISOString(),
       ...meta,

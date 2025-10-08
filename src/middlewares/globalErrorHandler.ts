@@ -4,20 +4,22 @@ import z from "zod";
 
 import AppError from "../utils/AppError.js";
 import { logger } from "../../logger.js";
+import { errorResponse } from "../utils/apiResponse.js";
 
 const handleZodError = (error: z.ZodError, res : Response) => {
     logger.error(`Zod Error: ${error.message}`);
-    return res.status(HttpStatus.BAD_REQUEST).json({
-        message: "Validation Error",
-        errors: error,
-    });
+
+    const errors = error.issues.map((issue) => ({
+        field: issue.path.join("."),
+        message: issue.message,
+    }));
+
+    return errorResponse(res, "Validation Error", HttpStatus.BAD_REQUEST, errors);
 }
 
 const handleAppError = (error: AppError, res: Response) => {
     logger.error(`App Error: ${error.message}`);
-    return res.status(error.statusCode).json({
-        message: error.message,
-    });
+    return errorResponse(res, error.message, error.statusCode);
 }
 
 const  errorHandler : ErrorRequestHandler = (error, req, res, next) => {
@@ -29,13 +31,9 @@ const  errorHandler : ErrorRequestHandler = (error, req, res, next) => {
         return handleAppError(error, res);
     }
     if (process.env.NODE_ENV === "development") {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: "Internal Server Error",
-        error: error.message,
-    });
+        return errorResponse(res, error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     } else {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: "Internal Server Error"});
+        return errorResponse(res, "Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
     }
     
 
