@@ -1,10 +1,9 @@
-import z, { email } from "zod";
+import z from "zod";
 import { HttpStatus } from "../constant/http.js";
 import { toUserDto } from "../dtos/userDto.js";
 import { changeUserPassword, getCurrentUser, updateUserInDb } from "../services/userService.js";
-import appAssert from "../utils/appAssert.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import { comparePassword } from "../utils/hashPassword.js";
+import { successResponse } from "../utils/apiResponse.js";
 
 export const userData = z.object({
     name: z.string().min(1, "Name is required"),
@@ -12,7 +11,7 @@ export const userData = z.object({
     message: "At least one field (name or email) must be provided",
 });
 
-const password = z.object({
+const passwordSchema = z.object({
     oldPassword: z.string().min(6, "Password must be at least 6 characters long"),
     newPassword: z.string().min(6, "New password must be at least 6 characters long"),
     confirmNewPassword: z.string().min(6, "Confirm new password must be at least 6 characters long"),
@@ -25,9 +24,7 @@ export const getUser = asyncHandler(async(req, res)=> {
 
     const user = await getCurrentUser(userId);
 
-    const userDto = toUserDto(user);
-
-    return res.status(HttpStatus.OK).json(userDto);
+    return successResponse(res, toUserDto(user), "User profile retrieved successfully", HttpStatus.OK);
 });
 
 export const updateUser = asyncHandler(async(req, res) => {
@@ -37,19 +34,16 @@ export const updateUser = asyncHandler(async(req, res) => {
 
     const updatedUser = await updateUserInDb(userId, parsedData);
 
-    return res.status(HttpStatus.OK).json(toUserDto(updatedUser));
+    return successResponse(res, toUserDto(updatedUser), "User updated successfully", HttpStatus.OK);
 });
 
 
 export const changePassword = asyncHandler(async(req, res) => {
     const userId = req.user.userID;
 
-    const parsedData = password.parse(req.body);
+    const parsedData = passwordSchema.parse(req.body);
 
     await changeUserPassword(userId, parsedData);
 
-    return res.status(HttpStatus.OK).json({
-        message: "Password changed successfully",
-    });
-
+    return successResponse(res, {}, "Password changed successfully", HttpStatus.OK);
 });

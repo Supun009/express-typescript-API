@@ -5,6 +5,7 @@ import { HttpStatus } from "../constant/http.js";
 import { getAccesstokenCookieOptions, getRefreshTokenCookieOptions, setCookies } from "../utils/cookies.js";
 import appAssert from "../utils/appAssert.js";
 import { verifyToken, type accessTokenPayload } from "../utils/jwt.js";
+import { createdResponse, successResponse } from "../utils/apiResponse.js";
 
 const logi = z.object({
     email: z.string().check(email("Invalid email format")),
@@ -39,9 +40,10 @@ export const login = asyncHandler(async(req, res)=> {
 
     if (parsedData) {
         const {accessToken, refreshToken} = await loginUser(parsedData);
-        return setCookies({res, accessToken, refreshToken}).status(HttpStatus.OK).json({
-            message: "Login successful",
-        });
+        
+        setCookies({res, accessToken, refreshToken});
+
+        return successResponse(res, {}, "Login successful", HttpStatus.OK); 
     }
 });
 
@@ -50,10 +52,7 @@ export const register = asyncHandler(async(req, res)=> {
 
     if (parsedData) {
         await registerUser(parsedData);
-        return res.status(HttpStatus.CREATED).json({
-            message: "Registration successful",
-        
-        });
+        return successResponse(res, {}, "Registration successful", HttpStatus.CREATED);
     }
 
 }); 
@@ -67,8 +66,10 @@ export const logout = asyncHandler(async(req, res)=> {
 
     await logoutUser(decoded.sessionId);
 
-    return res.clearCookie("accessToken", getAccesstokenCookieOptions()).
-    clearCookie("refreshToken", getRefreshTokenCookieOptions()).json({message: "Logged out"}); 
+    res.clearCookie("accessToken", getAccesstokenCookieOptions()).
+    clearCookie("refreshToken", getRefreshTokenCookieOptions());
+
+    return successResponse(res, {}, "Logout successful", HttpStatus.OK); 
 });
 
 export const refresUserToken = asyncHandler(async(req, res) => {
@@ -82,8 +83,10 @@ export const refresUserToken = asyncHandler(async(req, res) => {
         setCookies({ res, accessToken, refreshToken: newRefreshToken });
     }
 
-    return res.status(HttpStatus.OK).cookie("accessToken", accessToken, getAccesstokenCookieOptions())
-    .json({message: "Token refreshed"});
+    res.cookie("accessToken", accessToken, getAccesstokenCookieOptions());
+
+    return successResponse(res, {}, "Token refreshed successfully", HttpStatus.OK);
+    
 });
 
 export const getResetToken = asyncHandler(async(req, res) => {
@@ -93,7 +96,7 @@ export const getResetToken = asyncHandler(async(req, res) => {
 
     const token = await createResetToken(email);
 
-    return res.status(HttpStatus.OK).json({message: "Password reset link sent to your email",  token});
+    return successResponse(res, token, "Reset token created successfully", HttpStatus.CREATED);
 });
 
 
@@ -106,7 +109,9 @@ export const resetPassword = asyncHandler(async(req, res) => {
 
     await resetUserPassword( id, token, parsedData.password);
 
-    return res.clearCookie("accessToken", getAccesstokenCookieOptions()).
-    clearCookie("refreshToken", getRefreshTokenCookieOptions()).
-    status(HttpStatus.OK).json({ message: "Password has been reset successfully" });
+    res.clearCookie("accessToken", getAccesstokenCookieOptions()).
+    
+    clearCookie("refreshToken", getRefreshTokenCookieOptions());
+
+    return successResponse(res, {}, "Password has been reset successfully", HttpStatus.OK);
 });

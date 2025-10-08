@@ -3,6 +3,7 @@ import Roles from "../constant/roles.js";
 import { toUserDto } from "../dtos/userDto.js";
 import { toUserDtoAdmin } from "../dtos/userdtoAdmin.js";
 import { deleteUserById, deleteUsers, getAllUsers, getUserById, updateUserByAdmin } from "../services/adminService.js";
+import { successResponse } from "../utils/apiResponse.js";
 import appAssert from "../utils/appAssert.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { userData } from "./userController.js";
@@ -14,7 +15,8 @@ export const getUsersAdmin = asyncHandler(async(req, res) => {
 
     const users = await getAllUsers()
 
-    return res.status(HttpStatus.OK).json({users});
+    return successResponse(res, users, "Users retrieved successfully", HttpStatus.OK);
+
 });
 
 export const getUserAdmin = asyncHandler(async(req, res) => {
@@ -27,9 +29,7 @@ export const getUserAdmin = asyncHandler(async(req, res) => {
 
     appAssert(user, HttpStatus.NOT_FOUND, "User not found");
 
-    const userDto = toUserDtoAdmin(user);
-
-    return res.status(HttpStatus.OK).json(userDto);
+    return successResponse(res, toUserDtoAdmin(user), "User retrieved successfully", HttpStatus.OK);
 });
 
 export const updateUserAdmin = asyncHandler(async(req, res) => {
@@ -44,9 +44,7 @@ export const updateUserAdmin = asyncHandler(async(req, res) => {
 
     appAssert(updatedUser, HttpStatus.NOT_FOUND, "User not found");
 
-    const userDto = toUserDtoAdmin(updatedUser);
-
-    return res.status(HttpStatus.OK).json(userDto);
+    return successResponse(res, toUserDtoAdmin(updatedUser), "User updated successfully", HttpStatus.OK);
 });
 
 export const deleteUserAdmin = asyncHandler(async(req, res) => {
@@ -56,9 +54,7 @@ export const deleteUserAdmin = asyncHandler(async(req, res) => {
 
     await deleteUserById(userId);
 
-    return res.status(HttpStatus.OK).json({
-        message: "User deleted successfully",
-    });
+    return successResponse(res, {}, "User deleted successfully", HttpStatus.OK);
 });
 
 export const deleteUsersAdmin = asyncHandler(async(req, res) => {
@@ -69,8 +65,6 @@ export const deleteUsersAdmin = asyncHandler(async(req, res) => {
 
     await deleteUsers(userIds); 
 
-    return res.status(HttpStatus.OK).json({
-        message: "Users deleted successfully",
-    });
+    return successResponse(res, {}, "Users deleted successfully", HttpStatus.OK);
 });
 
