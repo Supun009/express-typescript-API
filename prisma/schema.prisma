@@ -22,6 +22,7 @@ model User {
   isVerified Boolean   @default(false)
   isDeleted  Boolean   @default(false)
   sessions  Session[]
+  auditLogs AuditLog[]
   passwordResets    PasswordReset[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -50,6 +51,29 @@ model PasswordReset {
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+model AuditLog {
+  id            String   @id @default(uuid())
+  userId        String?
+  sessionId     String?
+  action        String   // LOGIN, LOGOUT, PASSWORD_CHANGE, etc.
+  resource      String?  // USER, SESSION, etc.
+  resourceId    String?
+  ipAddress     String
+  userAgent     String
+  deviceInfo    Json?    // Browser, OS, Device type
+  status        String   // SUCCESS, FAILURE
+  errorMessage  String?
+  metadata      Json?    // Additional data
+  createdAt     DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@index([ipAddress])
 }
 
 
