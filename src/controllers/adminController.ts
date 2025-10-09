@@ -6,6 +6,7 @@ import {
   deleteUsers,
   getAllUsers,
   getUserById,
+  revokeSessionByAdmin,
   updateUserByAdmin,
 } from "../services/adminService.js";
 import { successResponse } from "../utils/apiResponse.js";
@@ -118,4 +119,23 @@ export const deleteUsersAdmin = asyncHandler(async (req, res) => {
   await deleteUsers(adminId, userIds, context);
 
   return successResponse(res, {}, "Users deleted successfully", HttpStatus.OK);
+});
+
+export const revokeUserSessionAdmin = asyncHandler(async (req, res) => {
+    const userRole = req.user.role;
+    const adminId = req.user.userID;
+    const sessionId = req.params.sessionId;
+    const context = getRequestContext(req);
+
+    appAssert(
+        userRole === Roles.ADMIN,
+        HttpStatus.UNAUTHORIZED,
+        "Unauthorized access"
+    );
+
+    appAssert(sessionId, HttpStatus.BAD_REQUEST, "Session ID is required");
+
+    await revokeSessionByAdmin(adminId, sessionId, context);
+
+    return successResponse(res, {}, "Session revoked successfully by admin", HttpStatus.OK);
 });

@@ -108,3 +108,45 @@ export const deleteUsers = async(adminId : string, userIds: string[], context: R
     });
 };
 
+export const revokeSessionByAdmin = async(adminId: string, sessionId: string, context: RequestContext) => {
+    try {
+        const session = await prisma.session.findUnique({
+            where: { id: sessionId },
+        });
+
+        if (!session) {
+             await createAuditLog({
+                userId: adminId,
+                action: AuditAction.ADMIN_SESSION_REVOKE_FAILED,
+                status: "FAILURE",
+                errorMessage: "Session not found",
+                ipAddress: context.ip || "unknown",
+                userAgent: context.userAgent || "unknown",
+            });
+            appAssert(session, HttpStatus.NOT_FOUND, "Session not found");
+        }
+
+        await prisma.session.delete({
+            where: { id: sessionId },
+        });
+
+        await createAuditLog({
+            userId: adminId,
+            action: AuditAction.ADMIN_SESSION_REVOKE_SUCCESS,
+            status: "SUCCESS",
+            ipAddress: context.ip || "unknown",
+            userAgent: context.userAgent || "unknown",
+            metadata: { targetUserId: session.userId, revokedSessionId: sessionId, ...parseUserAgent(context.userAgent) },
+        });
+    } catch (error) {
+        await createAuditLog({
+            userId: adminId,
+            action: AuditAction.ADMIN_SESSION_REVOKE_FAILED,
+            status: "FAILURE",
+            errorMessage: error instanceof Error ? error.message : "Failed to revoke session",
+            ipAddress: context.ip || "unknown",
+            userAgent: context.userAgent || "unknown",
+        });
+        throw error;
+    }
+};
