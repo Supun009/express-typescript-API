@@ -126,7 +126,7 @@ app.use(
 //   next();
 // });
 
-app.get("/api/v1/health", helthRouter);
+app.use("/api/v1/health", helthRouter);
 
 app.use("/api/v1/auth", authRouter);
 
