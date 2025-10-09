@@ -130,7 +130,7 @@ adminRouter.delete("/users/delete", authMiddleware, deleteUsersAdmin);
 /**
  * @swagger
  * /api/v1/admin/users/session:
- *   delete:
+ *   get:
  *     summary: Revoke all sessions for a user
  *     tags: [Admin]
  *     security:
@@ -150,7 +150,7 @@ adminRouter.delete("/users/delete", authMiddleware, deleteUsersAdmin);
  *       200:
  *         description: All sessions revoked successfully by admin
  */
-adminRouter.delete("/users/session", authMiddleware, getActiveSessions);
+adminRouter.get("/users/session", authMiddleware, getActiveSessions);
 
 /**
  * @swagger
@@ -180,7 +180,7 @@ adminRouter.delete("/users/revoke-session", authMiddleware, revokeUserSessionsAd
 /**
  * @swagger
  * /api/v1/admin/users/login-history:
- *   delete:
+ *   get:
  *     summary: Get login history for a user
  *     tags: [Admin]
  *     security:
@@ -195,7 +195,7 @@ adminRouter.delete("/users/revoke-session", authMiddleware, revokeUserSessionsAd
  *       200:
  *         description: Login history retrieved successfully
  */
-adminRouter.delete("/users/login-history", authMiddleware, getLoginHistory);
+adminRouter.get("/users/login-history", authMiddleware, getLoginHistory);
 
 /**
  * @swagger

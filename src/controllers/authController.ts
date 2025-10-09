@@ -128,3 +128,4 @@ export const resetPassword = asyncHandler(async(req, res) => {
 
     return successResponse(res, {}, "Password has been reset successfully", HttpStatus.OK);
 });
+

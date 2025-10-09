@@ -1,4 +1,7 @@
-import { getUserActiveSessions, getUserAuditLogs } from "../services/auditService.js";
+import {
+  getUserActiveSessions,
+  getUserAuditLogs,
+} from "../services/auditService.js";
 import { HttpStatus } from "../constant/http.js";
 import Roles from "../constant/roles.js";
 import { toUserDtoAdmin } from "../dtos/userdtoAdmin.js";
@@ -123,45 +126,59 @@ export const deleteUsersAdmin = asyncHandler(async (req, res) => {
 });
 
 export const revokeUserSessionsAdmin = asyncHandler(async (req, res) => {
-    const userRole = req.user.role;
-    const adminId = req.user.userID;
-    const userIds: string[] = req.body.userIds;
-    const context = getRequestContext(req);
+  const userRole = req.user.role;
+  const adminId = req.user.userID;
+  const userIds: string[] = req.body.userIds;
+  const context = getRequestContext(req);
 
-    appAssert(
-        userRole === Roles.ADMIN,
-        HttpStatus.UNAUTHORIZED,
-        "Unauthorized access"
-    );
+  appAssert(
+    userRole === Roles.ADMIN,
+    HttpStatus.UNAUTHORIZED,
+    "Unauthorized access"
+  );
 
-    await revokeSessionsByAdmin(adminId, userIds, context);
+  await revokeSessionsByAdmin(adminId, userIds, context);
 
-    return successResponse(res, {}, "All sessions revoked successfully by admin", HttpStatus.OK);
+  return successResponse(
+    res,
+    {},
+    "All sessions revoked successfully by admin",
+    HttpStatus.OK
+  );
 });
 
 export const getLoginHistory = asyncHandler(async (req, res) => {
-    const userId = req.user.userID;
+  const adminId = req.user.userID;
+  const userRole = req.user.role;
+  const userId = req.params.id || "";
 
-    const auditLogs = await getUserAuditLogs(userId, 50);
+  appAssert(
+    userRole === Roles.ADMIN,
+    HttpStatus.UNAUTHORIZED,
+    "Unauthorized access"
+  );
 
-    return successResponse(
-        res,
-        auditLogs,
-        "Login history retrieved successfully"
-    );
+  const auditLogs = await getUserAuditLogs(userId, 50);
+
+  return successResponse(
+    res,
+    auditLogs,
+    "Login history retrieved successfully"
+  );
 });
-
 
 export const getActiveSessions = asyncHandler(async (req, res) => {
-    const userId = req.user.userID;
+  const adminId = req.user.userID;
+  const userRole = req.user.role;
+  const userId = req.params.id || "";
 
-    const sessions = await getUserActiveSessions(userId);
+  appAssert(userRole === Roles.ADMIN , HttpStatus.UNAUTHORIZED, "Unauthorized access");
 
-    return successResponse(
-        res,
-        sessions,
-        "Active sessions retrieved successfully"
-    );
+  const sessions = await getUserActiveSessions(userId);
+
+  return successResponse(
+    res,
+    sessions,
+    "Active sessions retrieved successfully"
+  );
 });
-
-

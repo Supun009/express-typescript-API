@@ -84,7 +84,6 @@ userRouter.put("/update", authMiddleware, updateUser);
  */
 userRouter.post("/changepassword", authMiddleware, changePassword);
 
-
 /**
  * @swagger
  * /api/v1/user/revoke-sessions:
