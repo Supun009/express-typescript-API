@@ -1,4 +1,5 @@
 import {
+  AuditAction,
   getUserActiveSessions,
   getUserAuditLogs,
 } from "../services/auditService.js";
@@ -158,7 +159,7 @@ export const getLoginHistory = asyncHandler(async (req, res) => {
     "Unauthorized access"
   );
 
-  const auditLogs = await getUserAuditLogs(userId, 50);
+  const auditLogs = await getUserAuditLogs(userId, 50, AuditAction.LOGIN_SUCCESS);
 
   return successResponse(
     res,

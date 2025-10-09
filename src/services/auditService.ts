@@ -95,10 +95,11 @@ export const createAuditLog = async (data: AuditLogData): Promise<void> => {
 
 export const getUserAuditLogs = async (
     userId: string,
-    limit: number = 50
+    limit: number = 50,
+    logType: string,
 ) => {
     return prisma.auditLog.findMany({
-        where: { userId },
+        where: { userId, action: logType },
         orderBy: { createdAt: "desc" },
         take: limit,
         select: {
