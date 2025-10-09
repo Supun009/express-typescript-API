@@ -173,5 +173,4 @@ adminRouter.delete("/users/session", authMiddleware, revokeUserSessionsAdmin);
 adminRouter.delete("/users/:id", authMiddleware, deleteUserAdmin);
 
 
-
 export default adminRouter;

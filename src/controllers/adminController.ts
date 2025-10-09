@@ -9,7 +9,6 @@ import {
   revokeSessionsByAdmin,
   updateUserByAdmin,
 } from "../services/adminService.js";
-import { revokeAllSessionsUser } from "../services/securityServiceUser.js";
 import { successResponse } from "../utils/apiResponse.js";
 import appAssert from "../utils/appAssert.js";
 import asyncHandler from "../utils/asyncHandler.js";
