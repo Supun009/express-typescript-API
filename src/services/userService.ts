@@ -2,7 +2,7 @@ import prisma from "../config/db.js";
 import { HttpStatus } from "../constant/http.js";
 import appAssert from "../utils/appAssert.js";
 import { comparePassword, hashPassword } from "../utils/hashPassword.js";
-import type { RequestContext } from "../utils/requestContext.js";
+import { parseUserAgent, type RequestContext } from "../utils/requestContext.js";
 import { AuditAction, createAuditLog } from "./auditService.js";
 
 export async function getCurrentUser(userId: string)  {
@@ -41,6 +41,7 @@ export async function updateUserInDb(userId: string, data: { name: string}, cont
         status: "SUCCESS",
         ipAddress: context.ip || 'unknown',
         userAgent: context.userAgent || 'unknown',
+        metadata: parseUserAgent(context.userAgent),
     });
 
     return updatedUser;
@@ -74,6 +75,7 @@ export async function changeUserPassword(userId: string, data :{oldPassword: str
         status: "SUCCESS",
         ipAddress: context.ip || 'unknown',
         userAgent: context.userAgent || 'unknown',
+        metadata: parseUserAgent(context.userAgent),
     });
 
     return updatedUser;
