@@ -1,5 +1,6 @@
 // src/utils/requestContext.ts
 import { randomUUID } from 'crypto';
+import {UAParser} from 'ua-parser-js';
 import type { Request } from 'express';
 
 export interface RequestContext {
@@ -13,9 +14,6 @@ export interface RequestContext {
     timestamp: Date;
 }
 
-/**
- * Extract request context for logging
- */
 export const getRequestContext = (req: Request): RequestContext => {
     // Get real IP address (considering proxies)
    const forwardedIp = req.headers['x-forwarded-for'] as string;
@@ -33,37 +31,21 @@ export const getRequestContext = (req: Request): RequestContext => {
     };
 };
 
-/**
- * Get device info from user agent
- */
+
 export const parseUserAgent = (userAgent: string): {
     browser?: string;
     os?: string;
     device?: string;
 } => {
-    const ua = userAgent.toLowerCase();
-    
-    // Simple parsing (consider using 'ua-parser-js' for production)
-    let browser = 'unknown';
-    let os = 'unknown';
-    let device = 'desktop';
-
-    // Browser detection
-    if (ua.includes('chrome')) browser = 'Chrome';
-    else if (ua.includes('firefox')) browser = 'Firefox';
-    else if (ua.includes('safari')) browser = 'Safari';
-    else if (ua.includes('edge')) browser = 'Edge';
-
-    // OS detection
-    if (ua.includes('windows')) os = 'Windows';
-    else if (ua.includes('mac')) os = 'macOS';
-    else if (ua.includes('linux')) os = 'Linux';
-    else if (ua.includes('android')) os = 'Android';
-    else if (ua.includes('ios') || ua.includes('iphone')) os = 'iOS';
-
-    // Device type
-    if (ua.includes('mobile')) device = 'mobile';
-    else if (ua.includes('tablet')) device = 'tablet';
-
-    return { browser, os, device };
+    if (!userAgent) {
+        return { browser: 'unknown', os: 'unknown', device: 'unknown' };
+    }
+    const parser = new UAParser(userAgent);
+    const result = parser.getResult();
+ 
+    return {
+        browser: result.browser.name || 'unknown',
+        os: result.os.name || 'unknown',
+        device: result.device.type || 'desktop',
+    };
 };

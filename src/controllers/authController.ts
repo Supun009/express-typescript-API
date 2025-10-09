@@ -42,7 +42,7 @@ export const login = asyncHandler(async(req, res)=> {
     const context = getRequestContext(req);
 
     if (parsedData) {
-        const {accessToken, refreshToken} = await loginUser({...parsedData, reqContext: context} );
+        const {accessToken, refreshToken} = await loginUser(parsedData, context );
         
         setCookies({res, accessToken, refreshToken});
 
@@ -56,7 +56,7 @@ export const register = asyncHandler(async(req, res)=> {
         const context = getRequestContext(req);
 
     if (parsedData) {
-        await registerUser({...parsedData, reqContext: context});
+        await registerUser(parsedData, context);
         return successResponse(res, {}, "Registration successful", HttpStatus.CREATED);
     }
 
