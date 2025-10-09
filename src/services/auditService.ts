@@ -114,7 +114,7 @@ export const getUserAuditLogs = async (
 };
 
 
-export const getSuspiciousActivity = async (
+export const suspiciousActivity = async (
     ipAddress: string,
     timeWindow: number = 15 // minutes
 ) => {

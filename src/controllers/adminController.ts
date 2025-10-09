@@ -2,6 +2,7 @@ import {
   AuditAction,
   getUserActiveSessions,
   getUserAuditLogs,
+  suspiciousActivity,
 } from "../services/auditService.js";
 import { HttpStatus } from "../constant/http.js";
 import Roles from "../constant/roles.js";
@@ -181,5 +182,24 @@ export const getActiveSessions = asyncHandler(async (req, res) => {
     res,
     sessions,
     "Active sessions retrieved successfully"
+  );
+});
+
+export const getSuspiciousActivity = asyncHandler(async (req, res) => {
+  const userRole = req.user.role;
+  const ip = req.body.ip;
+
+  appAssert(
+    userRole === Roles.ADMIN,
+    HttpStatus.UNAUTHORIZED,
+    "Unauthorized access"
+  );
+
+  const activity = await suspiciousActivity(ip);
+
+  return successResponse(
+    res,
+    activity,
+    "Suspicious activity retrieved successfully"
   );
 });
