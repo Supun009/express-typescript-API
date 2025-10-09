@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { changePassword, getUser, updateUser } from "../controllers/userController.js";
+import { revokeSessionByUser } from "../controllers/securityController.js";
 
 const userRouter = Router();
 
@@ -83,5 +84,21 @@ userRouter.put("/update", authMiddleware, updateUser);
  */
 userRouter.post("/changepassword", authMiddleware, changePassword);
 
-export default userRouter;
+/**
+ * @swagger
+ * /api/v1/user/revoke-sessions:
+ *   delete:
+ *     summary: Revoke all other active sessions for the current user
+ *     description: Logs the user out of all devices except for the one making the request.
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: All other sessions have been successfully revoked.
+ *       401:
+ *         description: Unauthorized if the user is not authenticated.
+ */
+userRouter.delete("/revoke-sessions", authMiddleware, revokeSessionByUser);
 
+export default userRouter;

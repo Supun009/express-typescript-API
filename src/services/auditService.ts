@@ -33,6 +33,16 @@ export enum AuditAction {
     ADMIN_USER_UPDATE = "ADMIN_USER_UPDATE",
     ADMIN_USER_DELETE = "ADMIN_USER_DELETE",
     ADMIN_USERS_VIEW = "ADMIN_USERS_VIEW",
+    ADMIN_SESSION_REVOKE_SUCCESS = "ADMIN_SESSION_REVOKE_SUCCESS",
+    ADMIN_SESSION_REVOKE_FAILED = "ADMIN_SESSION_REVOKE_FAILED",
+
+    // Session Management
+    SESSION_REVOKE_SUCCESS = "SESSION_REVOKE_SUCCESS",
+    SESSION_REVOKE_FAILED = "SESSION_REVOKE_FAILED",
+
+    //session revoks
+    ALL_SESSIONS_REVOKE_SUCCESS="ALL_SESSIONS_REVOKE_SUCCESS",
+    ALL_SESSIONS_REVOKE_FAILED="ALL_SESSIONS_REVOKE_FAILED",
 }
 
 export interface AuditLogData {
@@ -48,9 +58,7 @@ export interface AuditLogData {
     metadata?: Record<string, any>;
 }
 
-/**
- * Create audit log entry
- */
+
 export const createAuditLog = async (data: AuditLogData): Promise<void> => {
     try {
         const deviceInfo = parseUserAgent(data.userAgent);
@@ -71,7 +79,6 @@ export const createAuditLog = async (data: AuditLogData): Promise<void> => {
             },
         });
 
-        // Log to console/file for immediate tracking
         logger.info({
             audit: true,
             action: data.action,
@@ -85,15 +92,14 @@ export const createAuditLog = async (data: AuditLogData): Promise<void> => {
     }
 };
 
-/**
- * Get audit logs for a user (for security dashboard)
- */
+
 export const getUserAuditLogs = async (
     userId: string,
-    limit: number = 50
+    limit: number = 50,
+    logType: string,
 ) => {
     return prisma.auditLog.findMany({
-        where: { userId },
+        where: { userId, action: logType },
         orderBy: { createdAt: "desc" },
         take: limit,
         select: {
@@ -107,10 +113,8 @@ export const getUserAuditLogs = async (
     });
 };
 
-/**
- * Get suspicious activity (multiple failed logins)
- */
-export const getSuspiciousActivity = async (
+
+export const suspiciousActivity = async (
     ipAddress: string,
     timeWindow: number = 15 // minutes
 ) => {
@@ -128,9 +132,7 @@ export const getSuspiciousActivity = async (
     return failedAttempts;
 };
 
-/**
- * Get all active sessions for a user
- */
+
 export const getUserActiveSessions = async (userId: string) => {
     return prisma.session.findMany({
         where: {

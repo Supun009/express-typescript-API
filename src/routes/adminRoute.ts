@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { deleteUserAdmin, deleteUsersAdmin, getUserAdmin, getUsersAdmin, updateUserAdmin } from "../controllers/adminController.js";
+import { deleteUserAdmin, deleteUsersAdmin, getActiveSessions, getLoginHistory, getSuspiciousActivity, getUserAdmin, getUsersAdmin, revokeUserSessionsAdmin, updateUserAdmin } from "../controllers/adminController.js";
 
 const adminRouter = Router();
 
@@ -129,6 +129,104 @@ adminRouter.delete("/users/delete", authMiddleware, deleteUsersAdmin);
 
 /**
  * @swagger
+ * /api/v1/admin/users/session:
+ *   get:
+ *     summary: Revoke all sessions for a user
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: All sessions revoked successfully by admin
+ */
+adminRouter.get("/users/session", authMiddleware, getActiveSessions);
+
+/**
+ * @swagger
+ * /api/v1/admin/suspicious-activity:
+ *   get:
+ *     summary: Get suspicious activity
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: ipAddress
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: IP address to check for suspicious activity
+ *     responses:
+ *       200:
+ *         description: Suspicious activity
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 failedAttempts:
+ *                   type: integer
+ */
+adminRouter.get("/suspicious-activity", authMiddleware, getSuspiciousActivity);
+
+/**
+ * @swagger
+ * /api/v1/admin/users/revoke-session:
+ *   delete:
+ *     summary: Revoke all sessions for a user
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: All sessions revoked successfully by admin
+ */
+adminRouter.delete("/users/revoke-session", authMiddleware, revokeUserSessionsAdmin);
+
+/**
+ * @swagger
+ * /api/v1/admin/users/login-history:
+ *   get:
+ *     summary: Get login history for a user
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Login history retrieved successfully
+ */
+adminRouter.get("/users/login-history", authMiddleware, getLoginHistory);
+
+/**
+ * @swagger
  * /api/v1/admin/users/{id}:
  *   delete:
  *     summary: Delete a user
@@ -146,5 +244,6 @@ adminRouter.delete("/users/delete", authMiddleware, deleteUsersAdmin);
  *         description: User deleted
  */
 adminRouter.delete("/users/:id", authMiddleware, deleteUserAdmin);
+
 
 export default adminRouter;
