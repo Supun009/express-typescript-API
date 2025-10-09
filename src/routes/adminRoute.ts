@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { deleteUserAdmin, deleteUsersAdmin, getUserAdmin, getUsersAdmin, updateUserAdmin } from "../controllers/adminController.js";
+import { deleteUserAdmin, deleteUsersAdmin, getUserAdmin, getUsersAdmin, revokeUserSessionsAdmin, updateUserAdmin } from "../controllers/adminController.js";
 
 const adminRouter = Router();
 
@@ -129,6 +129,31 @@ adminRouter.delete("/users/delete", authMiddleware, deleteUsersAdmin);
 
 /**
  * @swagger
+ * /api/v1/admin/users/session:
+ *   delete:
+ *     summary: Revoke all sessions for a user
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: All sessions revoked successfully by admin
+ */
+adminRouter.delete("/users/session", authMiddleware, revokeUserSessionsAdmin);
+
+/**
+ * @swagger
  * /api/v1/admin/users/{id}:
  *   delete:
  *     summary: Delete a user
@@ -146,5 +171,7 @@ adminRouter.delete("/users/delete", authMiddleware, deleteUsersAdmin);
  *         description: User deleted
  */
 adminRouter.delete("/users/:id", authMiddleware, deleteUserAdmin);
+
+
 
 export default adminRouter;
