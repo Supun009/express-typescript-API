@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { deleteUserAdmin, deleteUsersAdmin, getUserAdmin, getUsersAdmin, revokeUserSessionsAdmin, updateUserAdmin } from "../controllers/adminController.js";
+import { deleteUserAdmin, deleteUsersAdmin, getActiveSessions, getLoginHistory, getUserAdmin, getUsersAdmin, revokeUserSessionsAdmin, updateUserAdmin } from "../controllers/adminController.js";
 
 const adminRouter = Router();
 
@@ -150,7 +150,52 @@ adminRouter.delete("/users/delete", authMiddleware, deleteUsersAdmin);
  *       200:
  *         description: All sessions revoked successfully by admin
  */
-adminRouter.delete("/users/session", authMiddleware, revokeUserSessionsAdmin);
+adminRouter.delete("/users/session", authMiddleware, getActiveSessions);
+
+/**
+ * @swagger
+ * /api/v1/admin/users/revoke-session:
+ *   delete:
+ *     summary: Revoke all sessions for a user
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: All sessions revoked successfully by admin
+ */
+adminRouter.delete("/users/revoke-session", authMiddleware, revokeUserSessionsAdmin);
+
+/**
+ * @swagger
+ * /api/v1/admin/users/login-history:
+ *   delete:
+ *     summary: Get login history for a user
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Login history retrieved successfully
+ */
+adminRouter.delete("/users/login-history", authMiddleware, getLoginHistory);
 
 /**
  * @swagger
