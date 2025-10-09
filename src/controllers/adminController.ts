@@ -6,9 +6,10 @@ import {
   deleteUsers,
   getAllUsers,
   getUserById,
-  revokeSessionByAdmin,
+  revokeSessionsByAdmin,
   updateUserByAdmin,
 } from "../services/adminService.js";
+import { revokeAllSessionsUser } from "../services/securityServiceUser.js";
 import { successResponse } from "../utils/apiResponse.js";
 import appAssert from "../utils/appAssert.js";
 import asyncHandler from "../utils/asyncHandler.js";
@@ -121,10 +122,10 @@ export const deleteUsersAdmin = asyncHandler(async (req, res) => {
   return successResponse(res, {}, "Users deleted successfully", HttpStatus.OK);
 });
 
-export const revokeUserSessionAdmin = asyncHandler(async (req, res) => {
+export const revokeUserSessionsAdmin = asyncHandler(async (req, res) => {
     const userRole = req.user.role;
     const adminId = req.user.userID;
-    const sessionId = req.params.sessionId;
+    const userIds: string[] = req.body.userIds;
     const context = getRequestContext(req);
 
     appAssert(
@@ -133,9 +134,9 @@ export const revokeUserSessionAdmin = asyncHandler(async (req, res) => {
         "Unauthorized access"
     );
 
-    appAssert(sessionId, HttpStatus.BAD_REQUEST, "Session ID is required");
+    await revokeSessionsByAdmin(adminId, userIds, context);
 
-    await revokeSessionByAdmin(adminId, sessionId, context);
-
-    return successResponse(res, {}, "Session revoked successfully by admin", HttpStatus.OK);
+    return successResponse(res, {}, "All sessions revoked successfully by admin", HttpStatus.OK);
 });
+
+

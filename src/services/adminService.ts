@@ -108,13 +108,15 @@ export const deleteUsers = async(adminId : string, userIds: string[], context: R
     });
 };
 
-export const revokeSessionByAdmin = async(adminId: string, sessionId: string, context: RequestContext) => {
+export const revokeSessionsByAdmin = async(adminId: string, userIds: string[], context: RequestContext) => {
     try {
-        const session = await prisma.session.findUnique({
-            where: { id: sessionId },
+        const sessions = await prisma.session.deleteMany({
+            where: {
+                userId: { in: userIds },
+            },
         });
 
-        if (!session) {
+        if (!sessions) {
              await createAuditLog({
                 userId: adminId,
                 action: AuditAction.ADMIN_SESSION_REVOKE_FAILED,
@@ -123,12 +125,8 @@ export const revokeSessionByAdmin = async(adminId: string, sessionId: string, co
                 ipAddress: context.ip || "unknown",
                 userAgent: context.userAgent || "unknown",
             });
-            appAssert(session, HttpStatus.NOT_FOUND, "Session not found");
+            appAssert(sessions, HttpStatus.NOT_FOUND, "Sessions not found");
         }
-
-        await prisma.session.delete({
-            where: { id: sessionId },
-        });
 
         await createAuditLog({
             userId: adminId,
@@ -136,7 +134,7 @@ export const revokeSessionByAdmin = async(adminId: string, sessionId: string, co
             status: "SUCCESS",
             ipAddress: context.ip || "unknown",
             userAgent: context.userAgent || "unknown",
-            metadata: { targetUserId: session.userId, revokedSessionId: sessionId, ...parseUserAgent(context.userAgent) },
+            metadata: { targetUserIds: userIds,  ...parseUserAgent(context.userAgent) },
         });
     } catch (error) {
         await createAuditLog({
