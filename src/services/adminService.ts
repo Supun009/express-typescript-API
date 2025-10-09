@@ -1,4 +1,3 @@
-import { parse } from "path";
 import prisma from "../config/db.js";
 import { HttpStatus } from "../constant/http.js";
 import appAssert from "../utils/appAssert.js";

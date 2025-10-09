@@ -48,9 +48,7 @@ export interface AuditLogData {
     metadata?: Record<string, any>;
 }
 
-/**
- * Create audit log entry
- */
+
 export const createAuditLog = async (data: AuditLogData): Promise<void> => {
     try {
         const deviceInfo = parseUserAgent(data.userAgent);
@@ -71,7 +69,6 @@ export const createAuditLog = async (data: AuditLogData): Promise<void> => {
             },
         });
 
-        // Log to console/file for immediate tracking
         logger.info({
             audit: true,
             action: data.action,
@@ -85,9 +82,7 @@ export const createAuditLog = async (data: AuditLogData): Promise<void> => {
     }
 };
 
-/**
- * Get audit logs for a user (for security dashboard)
- */
+
 export const getUserAuditLogs = async (
     userId: string,
     limit: number = 50
@@ -107,9 +102,7 @@ export const getUserAuditLogs = async (
     });
 };
 
-/**
- * Get suspicious activity (multiple failed logins)
- */
+
 export const getSuspiciousActivity = async (
     ipAddress: string,
     timeWindow: number = 15 // minutes
@@ -128,9 +121,7 @@ export const getSuspiciousActivity = async (
     return failedAttempts;
 };
 
-/**
- * Get all active sessions for a user
- */
+
 export const getUserActiveSessions = async (userId: string) => {
     return prisma.session.findMany({
         where: {
