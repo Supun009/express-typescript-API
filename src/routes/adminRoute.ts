@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { deleteUserAdmin, deleteUsersAdmin, getActiveSessions, getLoginHistory, getUserAdmin, getUsersAdmin, revokeUserSessionsAdmin, updateUserAdmin } from "../controllers/adminController.js";
+import { deleteUserAdmin, deleteUsersAdmin, getActiveSessions, getLoginHistory, getSuspiciousActivity, getUserAdmin, getUsersAdmin, revokeUserSessionsAdmin, updateUserAdmin } from "../controllers/adminController.js";
 
 const adminRouter = Router();
 
@@ -151,6 +151,34 @@ adminRouter.delete("/users/delete", authMiddleware, deleteUsersAdmin);
  *         description: All sessions revoked successfully by admin
  */
 adminRouter.get("/users/session", authMiddleware, getActiveSessions);
+
+/**
+ * @swagger
+ * /api/v1/admin/suspicious-activity:
+ *   get:
+ *     summary: Get suspicious activity
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: ipAddress
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: IP address to check for suspicious activity
+ *     responses:
+ *       200:
+ *         description: Suspicious activity
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 failedAttempts:
+ *                   type: integer
+ */
+adminRouter.get("/suspicious-activity", authMiddleware, getSuspiciousActivity);
 
 /**
  * @swagger
