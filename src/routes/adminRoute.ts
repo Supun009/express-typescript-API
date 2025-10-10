@@ -150,7 +150,7 @@ adminRouter.delete("/users/delete", authMiddleware, deleteUsersAdmin);
  *       200:
  *         description: All sessions revoked successfully by admin
  */
-adminRouter.get("/users/session", authMiddleware, getActiveSessions);
+adminRouter.get("/active-session", authMiddleware, getActiveSessions);
 
 /**
  * @swagger
@@ -203,7 +203,7 @@ adminRouter.get("/suspicious-activity", authMiddleware, getSuspiciousActivity);
  *       200:
  *         description: All sessions revoked successfully by admin
  */
-adminRouter.delete("/users/revoke-session", authMiddleware, revokeUserSessionsAdmin);
+adminRouter.delete("/revoke-sessions", authMiddleware, revokeUserSessionsAdmin);
 
 /**
  * @swagger
@@ -223,7 +223,7 @@ adminRouter.delete("/users/revoke-session", authMiddleware, revokeUserSessionsAd
  *       200:
  *         description: Login history retrieved successfully
  */
-adminRouter.get("/users/login-history", authMiddleware, getLoginHistory);
+adminRouter.get("/users/login-history/:id", authMiddleware, getLoginHistory);
 
 /**
  * @swagger

@@ -34,7 +34,7 @@ app.use(
   })
 );
 
-app.use(requestLogger);
+
 
 app.use(
   helmet({
@@ -120,6 +120,8 @@ app.use(
     credentials: true, // Allow cookies to be sent with requests
   })
 );
+
+app.use(requestLogger);
 
 //   app.use((req, res, next) => {
 //   logger.info(`${new Date().toISOString().split('T')[0]} - ${req.method} ${req.originalUrl}`);

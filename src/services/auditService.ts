@@ -133,10 +133,10 @@ export const suspiciousActivity = async (
 };
 
 
-export const getUserActiveSessions = async (userId: string) => {
+export const getUserActiveSessions = async (userIds: string[]) => {
     return prisma.session.findMany({
         where: {
-            userId,
+            userId: { in: userIds },
             expiresAt: { gt: new Date() },
         },
         orderBy: { createdAt: "desc" },
