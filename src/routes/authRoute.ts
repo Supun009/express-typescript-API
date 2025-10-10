@@ -1,5 +1,6 @@
 import Router from "express";
 import { getResetToken, login, logout, refresUserToken, register, resetPassword } from "../controllers/authController.js";
+import { limiter } from "../middlewares/rateLimitter.js";
 
 const authRouter = Router();
 
@@ -34,7 +35,7 @@ const authRouter = Router();
  *                   type: string
  *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.0LfQIWnxy4M8JnhybC1qnpHdJO1QRFp9MKnjuyZT1iFQpGF0aW9uZXhwPQkDMFpmw9Ij68UAx1jppr6FoAIbJnV2a3Mw
  */
-authRouter.post("/login", login);
+authRouter.post("/login", limiter, login);
 
 /**
  * @swagger
@@ -65,7 +66,7 @@ authRouter.post("/login", login);
  *       201:
  *         description: User registered successfully
  */
-authRouter.post("/register", register);
+authRouter.post("/register", limiter, register);
 
 /**
  * @swagger
