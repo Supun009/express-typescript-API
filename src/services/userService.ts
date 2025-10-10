@@ -3,6 +3,7 @@ import { HttpStatus } from "../constant/http.js";
 import appAssert from "../utils/appAssert.js";
 import { comparePassword, hashPassword } from "../utils/hashPassword.js";
 import { parseUserAgent, type RequestContext } from "../utils/requestContext.js";
+import { sanitizeInput } from "../utils/sanitizer.js";
 import { AuditAction, createAuditLog } from "./auditService.js";
 
 export async function getCurrentUser(userId: string)  {
@@ -30,9 +31,11 @@ export async function updateUserInDb(userId: string, data: { name: string}, cont
 
     appAssert(user, HttpStatus.NOT_FOUND, "User not found");
 
+    const sanitizedName = sanitizeInput(data.name);
+
     const updatedUser = await prisma.user.update({
         where: { id: userId },
-        data,
+        data: { name: sanitizedName },
     });
 
     await createAuditLog({

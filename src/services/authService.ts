@@ -19,6 +19,7 @@ import {
   parseUserAgent,
   type RequestContext,
 } from "../utils/requestContext.js";
+import { sanitizeInput } from "../utils/sanitizer.js";
 
 export type LoginUSerType = {
   email: string;
@@ -35,8 +36,10 @@ export const loginUser = async (
   user: LoginUSerType,
   context: RequestContext
 ) => {
+  const sanitizedEmail = sanitizeInput(user.email);
+
   const existingUser = await prisma.user.findUnique({
-    where: { email: user.email },
+    where: { email: sanitizedEmail },
   });
 
   if (!existingUser) {
@@ -119,9 +122,13 @@ export const registerUser = async (
   user: RegisterUserType,
   context: RequestContext
 ) => {
+  const sanitizedEmail = sanitizeInput(user.email);
+  const sanitizedName = sanitizeInput(user.name);
+
   const existingUser = await prisma.user.findUnique({
-    where: { email: user.email },
+    where: { email: sanitizedEmail },
   });
+
   if (existingUser) {
     await createAuditLog({
       action: AuditAction.REGISTER,
@@ -138,8 +145,8 @@ export const registerUser = async (
 
   const newUser = await prisma.user.create({
     data: {
-      name: user.name,
-      email: user.email,
+      name: sanitizedName,
+      email: sanitizedEmail,
       password: hashedPassword,
       role: Roles.USER,
     },
@@ -267,8 +274,10 @@ export const createResetToken = async (
   email: string,
   context: RequestContext
 ) => {
+  const sanitizedEmail = sanitizeInput(email);
+
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: { email: sanitizedEmail },
   });
 
   appAssert(user, HttpStatus.NOT_FOUND, "User not found");
@@ -428,5 +437,3 @@ export const resetUserPassword = async (
 
   return updatedUser;
 };
-
-
