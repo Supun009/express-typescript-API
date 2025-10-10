@@ -156,13 +156,13 @@ Follow these instructions to get a copy of the project up and running on your lo
 
     | Variable              | Description                                        | Example                                                      |
     | --------------------- | -------------------------------------------------- | ------------------------------------------------------------ |
-    | `DATABASE_URL`        | Your full PostgreSQL connection string.            | `postgresql://postgres:mysecretpassword@localhost:5432/mydb?schema=public` |
+    | `DATABASE_URL`        | Your full PostgreSQL connection string.            | `postgresql://postgres:mysecretpassword@localhost:5432/mydb` |
     | `CLIENT_URL`         | The client origin allowed to access the API.       | `http://localhost:3001`                                      |
-    | `NODE_ENV`            | The environment in which the application is running.    | `development` or `production` | `development`                                                      |
+    | `NODE_ENV`            | The environment in which the application is running.    | `development` or `production`                                |
     | `LOG_LEVEL`           | The log level for the application.              | `info`                                                       |
     | `PORT`                | The port the application will run on.              | `3000`                                                       |
     | `ACCESS_JWT_SECRET`    | Secret key for signing JWT access tokens.          | `your_super_secret_access_token_key_min_32_chars_long_abc123`                                      |
-    | `REFRESH_JWT_SECRET` | Secret key for signing JWT refresh tokens.         | `your_super_secret_refresh_token_key_min_32_chars_long_xyz789`                              |
+    | `REFRESH_JWT_SECRET`  | Secret key for signing JWT refresh tokens.         | `your_super_secret_refresh_token_key_min_32_chars_long_xyz789` |
 
 4.  **Apply Database Migrations:**
     Make sure your PostgreSQL database server is running and the `DATABASE_URL` in your `.env` file is correct. Then, run the following command to apply the database schema:
@@ -197,24 +197,8 @@ You can also run this application using Docker and Docker Compose.
     *   [Docker](https://docs.docker.com/get-docker/)
     *   [Docker Compose](https://docs.docker.com/compose/install/)
 
-2.  **Environment Variables:**
+2.  **Docker-compose.yml:**
     Our `docker-compose.yml` is set up for development and includes a PostgreSQL database service.
-
-    Open the `docker-compose.yml` file and add the following environment variables to the `node-app` service:
-
-    ```yaml
-    services:
-      # ... (postgres-db service)
-      node-app:
-        # ... (build, container_name, etc.)
-        environment:
-          - NODE_ENV=development
-          -            DATABASE_URL=postgres://postgres:mysecretpassword@postgres-db:5432/mydb
-          - 
-        # ... (ports, depends_on, etc.)
-    ```
-
-    Replace `database url` with your own secret keys.
 
 3.  **Build and Run:**
     Once you've configured the environment variables, you can build and run the application with a single command:
@@ -276,15 +260,6 @@ Here are the main API routes available:
 ## 🧪 Testing
 
 This project uses Jest for running unit and integration tests. To run the test suite, use the following commands:
-
-```bash
-node --experimental-vm-modules node_modules/jest/bin/jest.js tests/auth.test.ts 
-
-node --experimental-vm-modules node_modules/jest/bin/jest.js tests/user.test.ts
-
-node --experimental-vm-modules node_modules/jest/bin/jest.js tests/admin.test.ts 
-```
-or
 
 ```bash
 npm run test
