@@ -278,11 +278,11 @@ Here are the main API routes available:
 This project uses Jest for running unit and integration tests. To run the test suite, use the following commands:
 
 ```bash
-node --experimental-vm-modules node_modules/jest/bin/jest.js tests/auth.test.ts tests/user.test.ts tests/auth.test.ts
+node --experimental-vm-modules node_modules/jest/bin/jest.js tests/auth.test.ts 
 
-node --experimental-vm-modules node_modules/jest/bin/jest.js tests/auth.test.ts tests/user.test.ts tests/user.test.ts
+node --experimental-vm-modules node_modules/jest/bin/jest.js tests/user.test.ts
 
-node --experimental-vm-modules node_modules/jest/bin/jest.js tests/auth.test.ts tests/user.test.ts tests/admin.test.ts
+node --experimental-vm-modules node_modules/jest/bin/jest.js tests/admin.test.ts 
 ```
 or
 
