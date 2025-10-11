@@ -59,8 +59,8 @@ describe("User Tests", () => {
             .expect(200);
 
         expect(response.body).toBeDefined(); 
-        expect(response.body.email).toBe(testObject.testEmail);
-        expect(response.body.name).toBe(testObject.name);
+        expect(response.body.data.email).toBe(testObject.testEmail);
+        expect(response.body.data.name).toBe(testObject.name);
     }); 
 
     it("should update user profile", async () => {
@@ -77,7 +77,7 @@ describe("User Tests", () => {
             .expect(200);
 
         expect(response.body).toBeDefined(); 
-        expect(response.body.name).toBe(updatedName);
+        expect(response.body.data.name).toBe(updatedName);
     }); 
 
     it("should change user password", async () => {

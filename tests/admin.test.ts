@@ -14,7 +14,7 @@ describe("Admin Tests", () => {
             .post("/api/v1/auth/login")
             .send({
                 email: "admin@example.com",
-                password: "newPassword1",
+                password: "111111",
             })
             .expect(200);
 
@@ -41,11 +41,11 @@ describe("Admin Tests", () => {
             .expect(200);
 
         expect(response.body).toBeDefined();
-        expect(Array.isArray(response.body.users)).toBe(true);
-        expect(response.body.users.length).toBeGreaterThan(0); // Ensure there's at least one user
+        expect(Array.isArray(response.body.data)).toBe(true);
+        expect(response.body.data.length).toBeGreaterThan(0); // Ensure there's at least one user
 
         // Extract user IDs for subsequent tests
-        userIds = response.body.users.map((user: { id: string }) => user.id);
+        userIds = response.body.data.map((user: { id: string }) => user.id);
         expect(userIds.length).toBeGreaterThan(0);
     });
 
@@ -56,7 +56,7 @@ describe("Admin Tests", () => {
             .expect(200);
 
         expect(response.body).toBeDefined(); 
-        expect(response.body.id).toBe(userIds[0]); 
+        expect(response.body.data.id).toBe(userIds[0]); 
     });
 
     it("should update user", async ()=> {
@@ -69,7 +69,7 @@ describe("Admin Tests", () => {
             .expect(200);
 
         expect(response.body).toBeDefined(); 
-        expect(response.body.name).toBe(updatedName); 
+        expect(response.body.data.name).toBe(updatedName); 
     });
 
     it("should delete users", async ()=> {

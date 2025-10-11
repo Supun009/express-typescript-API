@@ -155,6 +155,4 @@ describe("Authentication Tests", () => {
         );
 
     });
-
-    
 });

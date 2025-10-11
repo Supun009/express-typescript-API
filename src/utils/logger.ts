@@ -14,7 +14,7 @@ const isDevelopment = env.NODE_ENV === 'development';
 const isTest = env.NODE_ENV === 'test';
 
 const logDirectory = path.join(__dirname, 'logs');
-if (!isDevelopment && !isTest) {
+if (!isDevelopment) {
     if (!fs.existsSync(logDirectory)) {
         fs.mkdirSync(logDirectory);
     }
