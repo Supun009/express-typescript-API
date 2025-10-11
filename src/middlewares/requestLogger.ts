@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { randomUUID } from 'crypto';
-import { logger } from '../../logger.js';
+import { logger } from '../utils/logger.js';
 
 
 export const requestLogger = (req: Request, res: Response, next: NextFunction) => {

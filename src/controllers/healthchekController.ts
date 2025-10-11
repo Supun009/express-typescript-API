@@ -1,4 +1,4 @@
-import { logger } from "../../logger.js";
+import { logger } from "../utils/logger.js";
 import prisma from "../config/db.js";
 import { HttpStatus } from "../constant/http.js";
 import { createdResponse, successResponse } from "../utils/apiResponse.js";

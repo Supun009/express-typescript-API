@@ -7,7 +7,7 @@ import userRouter from "./routes/userRoute.js";
 import { setupSwagger } from "./../swagger.js";
 import adminRouter from "./routes/adminRoute.js";
 import helmet from "helmet";
-import { logger } from "./../logger.js";
+import { logger } from "./utils/logger.js";
 import { pinoHttp } from "pino-http";
 import { HttpStatus } from "./constant/http.js";
 import prisma from "./config/db.js";

@@ -1,7 +1,8 @@
 // src/services/auditService.ts
 import prisma from "../config/db.js";
 import { parseUserAgent } from "../utils/requestContext.js";
-import { logger } from "../../logger.js";
+import { logger } from "../utils/logger.js";
+import { logError } from "../utils/logger.js";
 import type { InputJsonValue } from "@prisma/client/runtime/library";
 
 export enum AuditAction {
@@ -88,7 +89,8 @@ export const createAuditLog = async (data: AuditLogData): Promise<void> => {
         }, `Audit: ${data.action}`);
     } catch (error) {
         // Don't throw - audit logging shouldn't break the app
-        logger.error(`Failed to create audit log: ${error}`);
+        // logger.error(`Failed to create audit log: ${error}`);
+        logError(error as Error, { message: "Failed to create audit log" });
     }
 };
 

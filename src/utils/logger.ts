@@ -3,7 +3,9 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { env } from './src/constant/env.js';
+import { env } from '../constant/env.js';
+import type { Request } from 'express';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -36,3 +38,22 @@ export const logger = pino({
         pid: false,
     }
 });
+
+export const logRequest = (req: Request) => {
+  logger.info({
+    type: 'REQUEST',
+    method: req.method,
+    path: req.path,
+    ip: req.ip,
+    userId: req.user?.userID,
+  });
+};
+
+export const logError = (error: Error, context?: Record<string, any>) => {
+  logger.error({
+    type: 'ERROR',
+    message: error.message,
+    stack: error.stack,
+    ...context,
+  });
+};

@@ -3,7 +3,7 @@ import { HttpStatus } from "../constant/http.js";
 import z from "zod";
 
 import AppError from "../utils/AppError.js";
-import { logger } from "../../logger.js";
+import { logger } from "../utils/logger.js";
 import { errorResponse } from "../utils/apiResponse.js";
 
 const handleZodError = (error: z.ZodError, res : Response) => {
