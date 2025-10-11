@@ -4,6 +4,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import { env } from "process";
 import { requestLogger } from "./requestLogger.js";
+import { limiter } from "./rateLimitter.js";
 
 const helmetConfig = helmet({
   // Content Security Policy - prevents XSS attacks
@@ -78,4 +79,5 @@ export const apiMiddlewares = [
   express.urlencoded({ extended: true, limit: "10mb" }),
   cookieParser(),
   requestLogger,
+  limiter,
 ];
