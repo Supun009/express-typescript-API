@@ -7,15 +7,11 @@ import userRouter from "./routes/userRoute.js";
 import { setupSwagger } from "./../swagger.js";
 import adminRouter from "./routes/adminRoute.js";
 import helmet from "helmet";
-import { logger } from "./utils/logger.js";
 import { pinoHttp } from "pino-http";
-import { HttpStatus } from "./constant/http.js";
-import prisma from "./config/db.js";
 import { requestLogger } from "./middlewares/requestLogger.js";
 import { env } from "./constant/env.js";
-import asyncHandler from "./utils/asyncHandler.js";
-import { checkHealth } from "./controllers/healthchekController.js";
 import helthRouter from "./routes/healthChekroute.js";
+import { logger } from "./utils/logger.js";
 
 const app = express();
 
@@ -122,11 +118,6 @@ app.use(
 );
 
 app.use(requestLogger);
-
-//   app.use((req, res, next) => {
-//   logger.info(`${new Date().toISOString().split('T')[0]} - ${req.method} ${req.originalUrl}`);
-//   next();
-// });
 
 app.use("/api/v1/health", helthRouter);
 
