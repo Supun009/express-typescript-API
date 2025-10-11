@@ -17,20 +17,20 @@ import { apiMiddlewares } from "./middlewares/apiMiddleware.js";
 
 const app = express();
 
-app.use(
-  pinoHttp({
-    logger: logger,
-    customLogLevel: (req, res, err) => {
-      if (res?.statusCode >= 400 && res?.statusCode < 500) {
-        return "warn";
-      }
-      if (res?.statusCode >= 500 || err) {
-        return "error";
-      }
-      return "info";
-    },
-  })
-);
+// app.use(
+//   pinoHttp({
+//     logger: logger,
+//     customLogLevel: (req, res, err) => {
+//       if (res?.statusCode >= 400 && res?.statusCode < 500) {
+//         return "warn";
+//       }
+//       if (res?.statusCode >= 500 || err) {
+//         return "error";
+//       }
+//       return "info";
+//     },
+//   })
+// );
 
 setupSwagger(app);
 

@@ -1,23 +1,16 @@
 import pino from 'pino';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import { env } from '../constant/env.js';
 import type { Request } from 'express';
-
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const isDevelopment = env.NODE_ENV === 'development';
 const isTest = env.NODE_ENV === 'test';
 
-const logDirectory = path.join(__dirname, 'logs');
+// Use project root for logs, which is more standard and robust.
+const logDirectory = path.join(process.cwd(), 'logs');
 if (!isDevelopment) {
-    if (!fs.existsSync(logDirectory)) {
-        fs.mkdirSync(logDirectory);
-    }
+  fs.mkdirSync(logDirectory, { recursive: true });
 }
 
 export const logger = pino({
