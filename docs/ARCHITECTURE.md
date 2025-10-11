@@ -16,6 +16,51 @@ This project follows a feature-first, layered architecture designed to promote s
 
 The application is divided into several distinct layers, each with a specific responsibility.
 
+## Request Flow Diagram
+
+The following diagram illustrates the request/response lifecycle for both a successful request and an error scenario.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Express App
+    participant Middleware
+    participant Router
+    participant Controller
+    participant Service
+    participant Prisma ORM
+    participant PostgreSQL DB
+    participant Global Error Handler
+
+    %% --- Happy Path: Successful Login ---
+    box "Successful Request"
+    Client->>Express App: POST /api/v1/auth/login
+    Express App->>Middleware: Process request
+    Middleware->>Router: Forward request
+    Router->>Controller: login(req, res)
+    Controller->>Controller: Validate request body (Zod)
+    Controller->>Service: loginUser(email, password)
+    Service->>Prisma ORM: findUser({ where: { email }})
+    Prisma ORM->>PostgreSQL DB: SELECT * FROM "User" WHERE email = ...
+    PostgreSQL DB-->>Prisma ORM: User data
+    Prisma ORM-->>Service: User object
+    Service->>Service: Compare password, generate JWTs
+    Service-->>Controller: { user, tokens }
+    Controller-->>Client: 200 OK Response
+    end
+
+    %% --- Error Path ---
+    box "Error Handling"
+    Client->>Express App: POST /api/v1/some-route
+    Express App->>Router: Route request
+    Router->>Controller: someFunction()
+    Controller->>Service: doSomething()
+    Service->>Prisma ORM: Throws Exception (caught by asyncHandler)
+    Controller->>Global Error Handler: next(error)
+    Global Error Handler-->>Client: 500 Internal Server Error Response
+    end
+```
+
 ### 1. Routes (`src/routes`)
 - **Responsibility**: Define the API endpoints, specify HTTP methods, and map them to the appropriate controller functions.
 - **Example**: `userRoute.ts` defines endpoints like `/profile` and links them to functions in `userController.ts`.
