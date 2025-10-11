@@ -1,5 +1,5 @@
 sequenceDiagram
-    title Node.js Express Request Lifecycle (Success & Error)
+title Node.js Express Request Lifecycle (Success & Error)
 
     participant C as Client
     participant E as Express App
@@ -40,7 +40,7 @@ sequenceDiagram
         CTL-->>E: 13. Send 200 OK Response
         deactivate CTL
         E-->>C: 14. 200 OK Success Response
-    
+
     else Error Handling Flow (DB Connection Failure)
         CTL->>S: 6. fetchData()
         activate S
@@ -50,14 +50,14 @@ sequenceDiagram
         deactivate P
         P--xS: 9. Throw Error (e.g., PrismaClientError)
         deactivate S
-        
+
         CTL->>CTL: 10. asyncHandler catches Exception
         CTL->>GEH: 11. Pass Error to next(err)
         activate GEH
         GEH->>GEH: 12. Format Standardized Error (500)
         GEH-->>E: 13. Send Error Response
         deactivate GEH
-        
+
         E-->>C: 14. 500 Internal Server Error Response
     end
     deactivate E

@@ -14,9 +14,7 @@ export default tseslint.config(
   // TypeScript specific configuration
   {
     files: ["src/**/*.ts", "tests/**/*.ts"],
-    extends: [
-      ...tseslint.configs.recommendedTypeChecked,
-    ],
+    extends: [...tseslint.configs.recommendedTypeChecked],
     languageOptions: {
       parserOptions: {
         project: true,
@@ -28,9 +26,9 @@ export default tseslint.config(
     },
     rules: {
       // Your existing strict rules
-      "indent": ["error", 2],
-      "quotes": ["error", "double"],
-      "semi": ["error", "always"],
+      indent: ["error", 2],
+      quotes: ["error", "double"],
+      semi: ["error", "always"],
       "no-trailing-spaces": "error",
       "object-curly-spacing": ["error", "always"],
 
@@ -44,7 +42,12 @@ export default tseslint.config(
       "unused-imports/no-unused-imports": "error",
       "unused-imports/no-unused-vars": [
         "warn",
-        { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
+        {
+          vars: "all",
+          varsIgnorePattern: "^_",
+          args: "after-used",
+          argsIgnorePattern: "^_",
+        },
       ],
 
       // Relaxed rules for tests if needed
@@ -58,11 +61,11 @@ export default tseslint.config(
   {
     files: ["*.js", "*.ts"],
     rules: {
-        "indent": ["error", 2],
-        "quotes": ["error", "double"],
-        "semi": ["error", "always"],
-        "no-trailing-spaces": "error",
-        "object-curly-spacing": ["error", "always"],
-    }
-  }
+      indent: ["error", 2],
+      quotes: ["error", "double"],
+      semi: ["error", "always"],
+      "no-trailing-spaces": "error",
+      "object-curly-spacing": ["error", "always"],
+    },
+  },
 );

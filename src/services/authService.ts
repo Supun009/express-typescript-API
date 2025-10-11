@@ -34,7 +34,7 @@ export type RegisterUserType = {
 
 export const loginUser = async (
   user: LoginUSerType,
-  context: RequestContext
+  context: RequestContext,
 ) => {
   const sanitizedEmail = sanitizeInput(user.email);
 
@@ -56,7 +56,7 @@ export const loginUser = async (
   }
   const isPasswordMatch = await comparePassword(
     user.password,
-    existingUser.password
+    existingUser.password,
   );
 
   if (!isPasswordMatch) {
@@ -96,14 +96,14 @@ export const loginUser = async (
 
   const refreshToken = createToken(
     refreshTokenPayload,
-    refreshTokenSignOptions
+    refreshTokenSignOptions,
   );
 
   if (!accessToken || !refreshToken) {
     appAssert(
       !accessToken || !refreshToken,
       HttpStatus.INTERNAL_SERVER_ERROR,
-      "Token generation failed"
+      "Token generation failed",
     );
   }
   await createAuditLog({
@@ -120,7 +120,7 @@ export const loginUser = async (
 
 export const registerUser = async (
   user: RegisterUserType,
-  context: RequestContext
+  context: RequestContext,
 ) => {
   const sanitizedEmail = sanitizeInput(user.email);
   const sanitizedName = sanitizeInput(user.name);
@@ -167,7 +167,7 @@ export const registerUser = async (
 export const logoutUser = async (
   id: string,
   ip?: string,
-  userAgent?: string
+  userAgent?: string,
 ) => {
   const session = await prisma.session.findUnique({
     where: { id },
@@ -203,7 +203,7 @@ export const logoutUser = async (
 
 export const refreshAccessToken = async (
   token: string,
-  context: RequestContext
+  context: RequestContext,
 ) => {
   const decoded = verifyToken(token, refreshTokenSignOptions);
 
@@ -229,7 +229,7 @@ export const refreshAccessToken = async (
   appAssert(
     session && session.expiresAt > new Date(),
     HttpStatus.UNAUTHORIZED,
-    "Session expired"
+    "Session expired",
   );
 
   const sessionNeedsUpdate =
@@ -247,7 +247,7 @@ export const refreshAccessToken = async (
   const newRefreshToken = sessionNeedsUpdate
     ? createToken(
         { sessionId: session.id, userId: session.userId },
-        refreshTokenSignOptions
+        refreshTokenSignOptions,
       )
     : undefined;
 
@@ -272,7 +272,7 @@ export const refreshAccessToken = async (
 
 export const createResetToken = async (
   email: string,
-  context: RequestContext
+  context: RequestContext,
 ) => {
   const sanitizedEmail = sanitizeInput(email);
 
@@ -315,7 +315,7 @@ export const createResetToken = async (
 export const verifyResetToken = async (
   token: string,
   id: string,
-  context: RequestContext
+  context: RequestContext,
 ): Promise<string> => {
   const passwordReset = await prisma.passwordReset.findFirst({
     where: { id },
@@ -335,10 +335,7 @@ export const verifyResetToken = async (
 
   appAssert(passwordReset, HttpStatus.NOT_FOUND, "Reset token not found");
 
-  const cryptoHash = crypto
-    .createHash("sha256")
-    .update(token)
-    .digest("hex");
+  const cryptoHash = crypto.createHash("sha256").update(token).digest("hex");
 
   const isTokenValid = await compareToken(cryptoHash, passwordReset.token);
 
@@ -357,7 +354,7 @@ export const verifyResetToken = async (
   appAssert(
     isTokenValid,
     HttpStatus.UNAUTHORIZED,
-    "Invalid or expired reset token"
+    "Invalid or expired reset token",
   );
 
   await createAuditLog({
@@ -376,7 +373,7 @@ export const resetUserPassword = async (
   tokenId: string,
   token: string,
   newPassword: string,
-  context: RequestContext
+  context: RequestContext,
 ) => {
   const passwordReset = await prisma.passwordReset.findFirst({
     where: { id: tokenId },
@@ -395,10 +392,7 @@ export const resetUserPassword = async (
 
   appAssert(passwordReset, HttpStatus.NOT_FOUND, "Reset token not found");
 
-  const cryptoHash = crypto
-    .createHash("sha256")
-    .update(token)
-    .digest("hex");
+  const cryptoHash = crypto.createHash("sha256").update(token).digest("hex");
 
   const isTokenValid = await compareToken(cryptoHash, passwordReset.token);
 
@@ -417,7 +411,7 @@ export const resetUserPassword = async (
   appAssert(
     isTokenValid && passwordReset.expiresAt > new Date(),
     HttpStatus.UNAUTHORIZED,
-    "Invalid or expired reset token"
+    "Invalid or expired reset token",
   );
 
   const hashedPassword = await hashPassword(newPassword);

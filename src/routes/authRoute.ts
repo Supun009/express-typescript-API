@@ -1,5 +1,12 @@
 import Router from "express";
-import { getResetToken, login, logout, refresUserToken, register, resetPassword } from "../controllers/authController.js";
+import {
+  getResetToken,
+  login,
+  logout,
+  refresUserToken,
+  register,
+  resetPassword,
+} from "../controllers/authController.js";
 import { limiter } from "../middlewares/rateLimitter.js";
 
 const authRouter = Router();
@@ -146,4 +153,3 @@ authRouter.post("/forgot-password", getResetToken);
 authRouter.post("/reset-password", resetPassword);
 
 export default authRouter;
-

@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 
 export default prisma;
 
-
 export const connectDB = async (maxRetries = 5) => {
   for (let i = 0; i < maxRetries; i++) {
     try {

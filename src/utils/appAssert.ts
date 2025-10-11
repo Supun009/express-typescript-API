@@ -8,10 +8,7 @@ type AppAssert = (
   message: string,
 ) => asserts condition;
 
-const appAssert: AppAssert = (
-  condition,
-  httpStatusCode,
-  message,
-) => assert(condition, new AppError(httpStatusCode, message));
+const appAssert: AppAssert = (condition, httpStatusCode, message) =>
+  assert(condition, new AppError(httpStatusCode, message));
 
 export default appAssert;

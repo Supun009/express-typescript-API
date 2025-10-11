@@ -27,7 +27,7 @@ export const getUsersAdmin = asyncHandler(async (req, res) => {
   appAssert(
     userRole === Roles.ADMIN,
     HttpStatus.UNAUTHORIZED,
-    "Unauthorized access"
+    "Unauthorized access",
   );
 
   const users = await getAllUsers();
@@ -36,7 +36,7 @@ export const getUsersAdmin = asyncHandler(async (req, res) => {
     res,
     users,
     "Users retrieved successfully",
-    HttpStatus.OK
+    HttpStatus.OK,
   );
 });
 
@@ -47,7 +47,7 @@ export const getUserAdmin = asyncHandler(async (req, res) => {
   appAssert(
     userRole === Roles.ADMIN && userId,
     HttpStatus.UNAUTHORIZED,
-    "Unauthorized access"
+    "Unauthorized access",
   );
 
   const user = await getUserById(userId);
@@ -58,7 +58,7 @@ export const getUserAdmin = asyncHandler(async (req, res) => {
     res,
     toUserDtoAdmin(user),
     "User retrieved successfully",
-    HttpStatus.OK
+    HttpStatus.OK,
   );
 });
 
@@ -72,7 +72,7 @@ export const updateUserAdmin = asyncHandler(async (req, res) => {
   appAssert(
     userRole === Roles.ADMIN && userId,
     HttpStatus.UNAUTHORIZED,
-    "Unauthorized access"
+    "Unauthorized access",
   );
 
   const parsedData = userData.parse(req.body);
@@ -81,14 +81,14 @@ export const updateUserAdmin = asyncHandler(async (req, res) => {
     adminId,
     userId,
     parsedData,
-    context
+    context,
   );
 
   return successResponse(
     res,
     toUserDtoAdmin(updatedUser),
     "User updated successfully",
-    HttpStatus.OK
+    HttpStatus.OK,
   );
 });
 
@@ -101,7 +101,7 @@ export const deleteUserAdmin = asyncHandler(async (req, res) => {
   appAssert(
     userRole === Roles.ADMIN && userId,
     HttpStatus.UNAUTHORIZED,
-    "Unauthorized access"
+    "Unauthorized access",
   );
 
   await deleteUserById(adminId, userId, context);
@@ -119,7 +119,7 @@ export const deleteUsersAdmin = asyncHandler(async (req, res) => {
   appAssert(
     userRole === Roles.ADMIN && userIds,
     HttpStatus.UNAUTHORIZED,
-    "Unauthorized access"
+    "Unauthorized access",
   );
 
   await deleteUsers(adminId, userIds, context);
@@ -136,7 +136,7 @@ export const revokeUserSessionsAdmin = asyncHandler(async (req, res) => {
   appAssert(
     userRole === Roles.ADMIN,
     HttpStatus.UNAUTHORIZED,
-    "Unauthorized access"
+    "Unauthorized access",
   );
 
   await revokeSessionsByAdmin(adminId, userIds, context);
@@ -145,7 +145,7 @@ export const revokeUserSessionsAdmin = asyncHandler(async (req, res) => {
     res,
     {},
     "All sessions revoked successfully by admin",
-    HttpStatus.OK
+    HttpStatus.OK,
   );
 });
 
@@ -157,15 +157,19 @@ export const getLoginHistory = asyncHandler(async (req, res) => {
   appAssert(
     userRole === Roles.ADMIN,
     HttpStatus.UNAUTHORIZED,
-    "Unauthorized access"
+    "Unauthorized access",
   );
 
-  const auditLogs = await getUserAuditLogs(userId, 50, AuditAction.LOGIN_SUCCESS);
+  const auditLogs = await getUserAuditLogs(
+    userId,
+    50,
+    AuditAction.LOGIN_SUCCESS,
+  );
 
   return successResponse(
     res,
     auditLogs,
-    "Login history retrieved successfully"
+    "Login history retrieved successfully",
   );
 });
 
@@ -174,14 +178,18 @@ export const getActiveSessions = asyncHandler(async (req, res) => {
   const userRole = req.user.role;
   const userIds: string[] = req.body.userIds;
 
-  appAssert(userRole === Roles.ADMIN , HttpStatus.UNAUTHORIZED, "Unauthorized access");
+  appAssert(
+    userRole === Roles.ADMIN,
+    HttpStatus.UNAUTHORIZED,
+    "Unauthorized access",
+  );
 
   const sessions = await getUserActiveSessions(userIds);
 
   return successResponse(
     res,
     sessions,
-    "Active sessions retrieved successfully"
+    "Active sessions retrieved successfully",
   );
 });
 
@@ -192,7 +200,7 @@ export const getSuspiciousActivity = asyncHandler(async (req, res) => {
   appAssert(
     userRole === Roles.ADMIN,
     HttpStatus.UNAUTHORIZED,
-    "Unauthorized access"
+    "Unauthorized access",
   );
 
   const activity = await suspiciousActivity(ip);
@@ -200,6 +208,6 @@ export const getSuspiciousActivity = asyncHandler(async (req, res) => {
   return successResponse(
     res,
     activity,
-    "Suspicious activity retrieved successfully"
+    "Suspicious activity retrieved successfully",
   );
 });

@@ -45,6 +45,7 @@ When you're ready to contribute code, please follow these steps:
 3.  **Make your changes.** Write clean, readable code and add comments where necessary. Ensure you adhere to the existing code style.
 
 4.  **Add or update tests.** Your changes should be covered by new or existing tests. Run the test suite to make sure everything is passing.
+
     ```bash
     npm run test
     ```
@@ -62,6 +63,7 @@ When you're ready to contribute code, please follow these steps:
     ```
 
     **Example:**
+
     ```
     feat(auth): add support for social login
 

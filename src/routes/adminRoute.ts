@@ -1,6 +1,16 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { deleteUserAdmin, deleteUsersAdmin, getActiveSessions, getLoginHistory, getSuspiciousActivity, getUserAdmin, getUsersAdmin, revokeUserSessionsAdmin, updateUserAdmin } from "../controllers/adminController.js";
+import {
+  deleteUserAdmin,
+  deleteUsersAdmin,
+  getActiveSessions,
+  getLoginHistory,
+  getSuspiciousActivity,
+  getUserAdmin,
+  getUsersAdmin,
+  revokeUserSessionsAdmin,
+  updateUserAdmin,
+} from "../controllers/adminController.js";
 
 const adminRouter = Router();
 
@@ -244,6 +254,5 @@ adminRouter.get("/users/login-history/:id", authMiddleware, getLoginHistory);
  *         description: User deleted
  */
 adminRouter.delete("/users/:id", authMiddleware, deleteUserAdmin);
-
 
 export default adminRouter;

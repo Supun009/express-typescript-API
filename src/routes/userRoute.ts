@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { changePassword, getUser, updateUser } from "../controllers/userController.js";
+import {
+  changePassword,
+  getUser,
+  updateUser,
+} from "../controllers/userController.js";
 import { revokeSessionByUser } from "../controllers/securityController.js";
 
 const userRouter = Router();

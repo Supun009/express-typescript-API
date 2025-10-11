@@ -12,6 +12,7 @@ This guide provides instructions for deploying the application to a production e
 ## Production Build Steps
 
 1.  **Clone the Repository**:
+
     ```bash
     git clone https://github.com/Supun009/express-typescript-API.git
     cd express-typescript-API
@@ -19,6 +20,7 @@ This guide provides instructions for deploying the application to a production e
 
 2.  **Install Dependencies**:
     Install only the production dependencies.
+
     ```bash
     npm install --production
     ```
@@ -35,13 +37,16 @@ This guide provides instructions for deploying the application to a production e
 
 4.  **Apply Database Migrations**:
     Before starting the application, ensure your database schema is up-to-date.
+
     ```bash
     npx prisma migrate deploy
     ```
+
     The `deploy` command is recommended for production as it applies pending migrations without generating new ones.
 
 5.  **Build the TypeScript Code**:
     Compile the TypeScript source code into JavaScript in the `dist` directory.
+
     ```bash
     npm run build
     ```
@@ -50,11 +55,13 @@ This guide provides instructions for deploying the application to a production e
     PM2 is a production process manager for Node.js applications that provides features like load balancing, auto-restart, and log management.
 
     Install PM2 globally:
+
     ```bash
     npm install pm2 -g
     ```
 
     Start the application:
+
     ```bash
     pm2 start dist/index.js --name "my-api"
     ```
