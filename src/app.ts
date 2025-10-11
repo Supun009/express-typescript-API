@@ -12,6 +12,7 @@ import { requestLogger } from "./middlewares/requestLogger.js";
 import { env } from "./constant/env.js";
 import helthRouter from "./routes/healthChekroute.js";
 import { logger } from "./utils/logger.js";
+import indexRouter from "./routes/indexRoute.js";
 
 const app = express();
 
@@ -119,13 +120,7 @@ app.use(
 
 app.use(requestLogger);
 
-app.use("/api/v1/health", helthRouter);
-
-app.use("/api/v1/auth", authRouter);
-
-app.use("/api/v1/user", userRouter);
-
-app.use("/api/v1/admin", adminRouter);
+app.use("/api", indexRouter);
 
 app.use(errorHandler);
 
