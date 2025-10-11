@@ -1,4 +1,3 @@
-import z, { email } from "zod";
 import asyncHandler from "../utils/asyncHandler.js";
 import { createResetToken, loginUser, logoutUser, refreshAccessToken, registerUser, resetUserPassword } from "../services/authService.js";
 import { HttpStatus } from "../constant/http.js";
@@ -7,32 +6,9 @@ import appAssert from "../utils/appAssert.js";
 import { verifyToken, type accessTokenPayload } from "../utils/jwt.js";
 import { createdResponse, successResponse } from "../utils/apiResponse.js";
 import { getRequestContext } from "../utils/requestContext.js";
+import { logi, passwordSchema, reg } from "../utils/authValidator.js";
 
-const logi = z.object({
-    email: z.string().check(email("Invalid email format")),
-    password: z.string().min(6, "Password must be at least 6 characters long"),
-}).refine((data => data.password.length >= 6), {
-    message: "Password must be at least 6 characters long",
-    path: ["password"],
-});
 
-const passwordSchema = z.object({
-        password: z.string().min(6, "Password must be at least 6 characters long"),
-        confirmPassword: z.string().min(6, "Confirm Password must be at least 6 characters long"),
-    }).refine((data) => data.password === data.confirmPassword, {
-        message: "Passwords do not match",  
-        path: ["confirmPassword"],
-    });
-
-const reg = z.object({
-    email: z.string().check(email("Invalid email format")),
-    name: z.string().min(1, "Name is required"),
-    password: z.string().min(6, "Password must be at least 6 characters long"),
-    confirmPassword: z.string().min(6, "Confirm Password must be at least 6 characters long"),
-}).refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",  
-    path: ["confirmPassword"],
-});
 
 
 
