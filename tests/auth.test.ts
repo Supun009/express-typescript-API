@@ -86,7 +86,7 @@ describe("Authentication Tests", () => {
             .set("Cookie", [`accessToken=${accessToken}`, `refreshToken=${refreshToken}`])
             .expect(200);
 
-        expect(response.body.message).toBe("Logged out");
+        expect(response.body.message).toBe("Logout successful");
     });
 
     it("should login a user", async () => {
@@ -125,11 +125,12 @@ describe("Authentication Tests", () => {
             .send({
                 email: testObject.testEmail,
             })
-            .expect(200);
+            .expect(201);
 
-        expect(response.body.message).toBe("Password reset link sent to your email");
-        expect(response.body.token).toBeDefined();
-        resetToken = response.body.token;
+        expect(response.body.message).toBe("Reset token created successfully");
+        expect(response.body.data.resetToken).toBeDefined();
+        console.log(response.body.data);
+        resetToken = response.body.data;
 
     });
 

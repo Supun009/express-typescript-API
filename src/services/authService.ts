@@ -335,7 +335,12 @@ export const verifyResetToken = async (
 
   appAssert(passwordReset, HttpStatus.NOT_FOUND, "Reset token not found");
 
-  const isTokenValid = await compareToken(token, passwordReset.token);
+  const cryptoHash = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+  const isTokenValid = await compareToken(cryptoHash, passwordReset.token);
 
   if (!isTokenValid) {
     await createAuditLog({
@@ -390,7 +395,12 @@ export const resetUserPassword = async (
 
   appAssert(passwordReset, HttpStatus.NOT_FOUND, "Reset token not found");
 
-  const isTokenValid = await compareToken(token, passwordReset.token);
+  const cryptoHash = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+  const isTokenValid = await compareToken(cryptoHash, passwordReset.token);
 
   if (!isTokenValid) {
     await createAuditLog({
