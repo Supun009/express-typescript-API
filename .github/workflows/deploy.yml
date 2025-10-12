@@ -49,7 +49,7 @@ jobs:
             --allow-unauthenticated \
             --port 3000 \
             --service-account ${{ secrets.SERVICE_ACCOUNT }} \
-            --set-env-vars="NODE_ENV=production,PORT=3000,LOG_LEVEL=info" \
+            --set-env-vars="NODE_ENV=production,LOG_LEVEL=info" \
             --set-secrets="DATABASE_URL=${{ secrets.SERVICE_NAME }}-db-url:latest" \
             --set-secrets="DIRECT_URL=${{ secrets.SERVICE_NAME }}-direct-url:latest" \
             --set-secrets="CLIENT_URL=${{ secrets.SERVICE_NAME }}-client-url:latest" \
