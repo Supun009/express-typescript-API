@@ -1,67 +1,67 @@
-name: Deploy to GCP
+# name: Deploy to GCP
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
-# REQUIRED: Allow workflow to request OIDC token
-permissions:
-  id-token: write
-  contents: read
+# # REQUIRED: Allow workflow to request OIDC token
+# permissions:
+#   id-token: write
+#   contents: read
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
 
-      - id: "auth"
-        name: "Authenticate to Google Cloud"
-        uses: "google-github-actions/auth@v2"
-        with:
-          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.SERVICE_ACCOUNT }}
+#       - id: "auth"
+#         name: "Authenticate to Google Cloud"
+#         uses: "google-github-actions/auth@v2"
+#         with:
+#           workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+#           service_account: ${{ secrets.SERVICE_ACCOUNT }}
 
-      - name: "Set up Cloud SDK"
-        uses: "google-github-actions/setup-gcloud@v2"
-      - name: "Cnfigure Docker for Artifact Registry"
-        run: |
-          gcloud auth configure-docker ${{ secrets.REGION }}-docker.pkg.dev
-      - name: Build Docker image
-        run: |
-          docker build -t ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY }}/${{ secrets.SERVICE_NAME }}:${{ github.sha }} .
+#       - name: "Set up Cloud SDK"
+#         uses: "google-github-actions/setup-gcloud@v2"
+#       - name: "Cnfigure Docker for Artifact Registry"
+#         run: |
+#           gcloud auth configure-docker ${{ secrets.REGION }}-docker.pkg.dev
+#       - name: Build Docker image
+#         run: |
+#           docker build -t ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY }}/${{ secrets.SERVICE_NAME }}:${{ github.sha }} .
 
-      - name: Push Docker image
-        run: |
-          docker push ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY }}/${{ secrets.SERVICE_NAME }}:${{ github.sha }}
+#       - name: Push Docker image
+#         run: |
+#           docker push ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY }}/${{ secrets.SERVICE_NAME }}:${{ github.sha }}
 
-      - name: Deploy to Cloud Run
-        run: |
-          # Set environment variables and secrets for the Cloud Run service.
-          # Using --set-secrets is the most secure way to handle sensitive data.
-          gcloud run deploy ${{ secrets.SERVICE_NAME }} \
-            --image ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY }}/${{ secrets.SERVICE_NAME }}:${{ github.sha }} \
-            --region ${{ secrets.REGION }} \
-            --platform managed \
-            --allow-unauthenticated \
-            --port 3000 \
-            --service-account ${{ secrets.SERVICE_ACCOUNT }} \
-            --set-env-vars="NODE_ENV=production,LOG_LEVEL=info" \
-            --set-secrets="DATABASE_URL=${{ secrets.SERVICE_NAME }}-db-url:latest" \
-            --set-secrets="DIRECT_URL=${{ secrets.SERVICE_NAME }}-direct-url:latest" \
-            --set-secrets="CLIENT_URL=${{ secrets.SERVICE_NAME }}-client-url:latest" \
-            --set-secrets="ACCESS_JWT_SECRET=${{ secrets.SERVICE_NAME }}-access-jwt:latest" \
-            --set-secrets="REFRESH_JWT_SECRET=${{ secrets.SERVICE_NAME }}-refresh-jwt:latest"
+#       - name: Deploy to Cloud Run
+#         run: |
+#           # Set environment variables and secrets for the Cloud Run service.
+#           # Using --set-secrets is the most secure way to handle sensitive data.
+#           gcloud run deploy ${{ secrets.SERVICE_NAME }} \
+#             --image ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY }}/${{ secrets.SERVICE_NAME }}:${{ github.sha }} \
+#             --region ${{ secrets.REGION }} \
+#             --platform managed \
+#             --allow-unauthenticated \
+#             --port 3000 \
+#             --service-account ${{ secrets.SERVICE_ACCOUNT }} \
+#             --set-env-vars="NODE_ENV=production,LOG_LEVEL=info" \
+#             --set-secrets="DATABASE_URL=${{ secrets.SERVICE_NAME }}-db-url:latest" \
+#             --set-secrets="DIRECT_URL=${{ secrets.SERVICE_NAME }}-direct-url:latest" \
+#             --set-secrets="CLIENT_URL=${{ secrets.SERVICE_NAME }}-client-url:latest" \
+#             --set-secrets="ACCESS_JWT_SECRET=${{ secrets.SERVICE_NAME }}-access-jwt:latest" \
+#             --set-secrets="REFRESH_JWT_SECRET=${{ secrets.SERVICE_NAME }}-refresh-jwt:latest"
 
-          # Note: The secret names above (e.g., ${{ secrets.SERVICE_NAME }}-db-url) are examples.
-          # You should replace them with the actual names you used when creating them in Secret Manager.
-          # The format is: ENV_VAR_NAME=SECRET_NAME:VERSION
-          # Using 'latest' for the version is common for simplicity.
+#           # Note: The secret names above (e.g., ${{ secrets.SERVICE_NAME }}-db-url) are examples.
+#           # You should replace them with the actual names you used when creating them in Secret Manager.
+#           # The format is: ENV_VAR_NAME=SECRET_NAME:VERSION
+#           # Using 'latest' for the version is common for simplicity.
 
-      - name: "Use gcloud CLI"
-        run: |
-          gcloud info
-          gcloud projects list
+#       - name: "Use gcloud CLI"
+#         run: |
+#           gcloud info
+#           gcloud projects list
