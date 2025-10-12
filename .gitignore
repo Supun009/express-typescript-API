@@ -33,11 +33,5 @@ coverage/
 # Build
 build/
 
-# workflow
-.github/
-.github/workflows/
-.github/workflows/*.yml
-.github/workflows/*.yaml
-.github/workflows/*.yaml
 
 /src/generated/prisma
