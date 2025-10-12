@@ -150,7 +150,6 @@ export const revokeUserSessionsAdmin = asyncHandler(async (req, res) => {
 });
 
 export const getLoginHistory = asyncHandler(async (req, res) => {
-  const adminId = req.user.userID;
   const userRole = req.user.role;
   const userId = req.params.id || "";
 
@@ -174,7 +173,6 @@ export const getLoginHistory = asyncHandler(async (req, res) => {
 });
 
 export const getActiveSessions = asyncHandler(async (req, res) => {
-  const adminId = req.user.userID;
   const userRole = req.user.role;
   const userIds: string[] = req.body.userIds;
 
