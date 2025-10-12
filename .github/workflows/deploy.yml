@@ -49,11 +49,11 @@ jobs:
             --allow-unauthenticated \
             --port 3000 \
             --set-env-vars="NODE_ENV=production,PORT=3000,LOG_LEVEL=info" \
-            --set-secrets="DATABASE_URL=${{ secrets.SERVICE_NAME }}-db-url" \
-            --set-secrets="DIRECT_URL=${{ secrets.SERVICE_NAME }}-direct-url" \
-            --set-secrets="CLIENT_URL=${{ secrets.SERVICE_NAME }}-client-url" \
-            --set-secrets="ACCESS_JWT_SECRET=${{ secrets.SERVICE_NAME }}-access-jwt" \
-            --set-secrets="REFRESH_JWT_SECRET=${{ secrets.SERVICE_NAME }}-refresh-jwt"
+            --set-secrets="DATABASE_URL=${{ secrets.SERVICE_NAME }}-db-url:latest" \
+            --set-secrets="DIRECT_URL=${{ secrets.SERVICE_NAME }}-direct-url:latest" \
+            --set-secrets="CLIENT_URL=${{ secrets.SERVICE_NAME }}-client-url:latest" \
+            --set-secrets="ACCESS_JWT_SECRET=${{ secrets.SERVICE_NAME }}-access-jwt:latest" \
+            --set-secrets="REFRESH_JWT_SECRET=${{ secrets.SERVICE_NAME }}-refresh-jwt:latest"
 
           # Note: The secret names above (e.g., ${{ secrets.SERVICE_NAME }}-db-url) are examples.
           # You should replace them with the actual names you used when creating them in Secret Manager.
