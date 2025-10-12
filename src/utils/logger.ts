@@ -16,19 +16,6 @@ if (!isDevelopment) {
 export const logger = pino({
   level: isDevelopment ? "debug" : "info",
   enabled: !isTest,
-  transport: isDevelopment
-    ? {
-        target: "pino-pretty",
-        options: {
-          colorize: true,
-        },
-      }
-    : {
-        target: "pino/file",
-        options: {
-          destination: path.join(logDirectory, "app.log"),
-        },
-      },
   timestamp: pino.stdTimeFunctions.isoTime,
   base: {
     pid: false,

@@ -38,8 +38,6 @@ services:
       start_period: 40s
     networks:
       - app_network
-    volumes:
-      - ./logs:/app/logs
 
 volumes:
   postgres-volume:
