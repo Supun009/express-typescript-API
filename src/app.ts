@@ -1,7 +1,6 @@
 import express, { type Response } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import errorHandler from "./middlewares/globalErrorHandler.js";
 import authRouter from "./routes/authRoute.js";
 import userRouter from "./routes/userRoute.js";
 import { setupSwagger } from "./../swagger.js";
@@ -37,7 +36,5 @@ app.use(apiMiddlewares);
 setupSwagger(app);
 
 app.use("/api", indexRouter);
-
-app.use(errorHandler);
 
 export default app;

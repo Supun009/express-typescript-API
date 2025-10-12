@@ -14,6 +14,7 @@ export const connectDB = async (maxRetries = 5) => {
       return;
     } catch (error) {
       logger.warn(`Database connection attempt ${i + 1}/${maxRetries} failed`);
+      await prisma.$disconnect();
       if (i === maxRetries - 1) {
         //  logger.error(`Failed to connect to database ${error}`);
         logError(error as Error, { message: "Failed to connect to database" });

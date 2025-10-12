@@ -22,7 +22,7 @@ const handleAppError = (error: AppError, res: Response) => {
   return errorResponse(res, error.message, error.statusCode);
 };
 
-const errorHandler: ErrorRequestHandler = (error, req, res) => {
+const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
   if (error instanceof z.ZodError) {
     return handleZodError(error, res);
   }
