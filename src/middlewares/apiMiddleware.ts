@@ -2,9 +2,9 @@ import helmet from "helmet";
 import cors from "cors";
 import express from "express";
 import cookieParser from "cookie-parser";
-import { env } from "process";
 import { requestLogger } from "./requestLogger.js";
 import { limiter } from "./rateLimitter.js";
+import { env } from "../constant/env.js";
 
 const helmetConfig = helmet({
   // Content Security Policy - prevents XSS attacks
