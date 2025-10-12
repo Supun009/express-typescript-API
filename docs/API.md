@@ -96,9 +96,19 @@ All endpoints require `ADMIN` role.
   "success": true,
   "message": "Health check",
   "data": {
-    "database": { "status": "pass", "responseTime": "5ms" },
-    "memory": { "status": "pass", "heapUsed": "30MB", "heapTotal": "150MB" },
-    "uptime": 123.45
+    "database": {
+      "status": "pass",
+      "responseTime": "422ms"
+    },
+    "memory": {
+      "status": "pass",
+      "heapUsed": "21MB",
+      "heapTotal": "56MB"
+    },
+    "uptime": 13.9085833
+  },
+  "meta": {
+    "timestamp": "2025-10-12T13:35:51.815Z"
   }
 }
 ```
