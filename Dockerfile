@@ -12,6 +12,8 @@ RUN npm install --include=dev
 # This allows Docker to cache the `npm install` step above.
 COPY . .
 
+RUN npx prisma generate
+
 # Build the application.
 RUN npm run build
 
