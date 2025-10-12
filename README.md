@@ -1,10 +1,10 @@
-# TypeScript Express API Boilerplate
+# TypeScript Express API
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/Supun009/express-typescript-API/ci.yml?branch=main)](https://github.com/Supun009/express-typescript-API/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-This is a robust and scalable REST API boilerplate built with Node.js, Express.js, and TypeScript. It includes features like user authentication, role-based access control, and user management, making it a great starting point for your next backend project.
+This is a robust and scalable REST API built with Node.js, Express.js, and TypeScript. It includes features like user authentication, role-based access control, and user management, making it a great starting point for your next backend project.
 
 ## 📚 Documentation
 
@@ -104,8 +104,8 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 3.  **Run in development mode (with hot-reloading):**
     `bash
-    npm run dev
-    `
+npm run dev
+`
     The API will be available at `http://localhost:3000` (or the `PORT` you specified).
 
 ### Running with Docker

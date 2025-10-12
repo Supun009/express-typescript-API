@@ -12,7 +12,6 @@ Root path: `e:\my projects\typeScript-express-example`
 │   ├── DEPLOYMENT.md
 │   ├── DIAGRAM.md
 │   └── folder_structure.md
-├── logs/ 🚫 (auto-hidden)
 ├── node_modules/ 🚫 (auto-hidden)
 ├── prisma/
 │   ├── migrations/

@@ -54,16 +54,18 @@ This guide provides instructions for deploying the application to a production e
 6.  **Start the Application with PM2**:
     PM2 is a production process manager for Node.js applications that provides features like load balancing, auto-restart, and log management.
 
+    The application is configured to write logs to standard output (`stdout`). PM2 will automatically capture these streams and store them in files (e.g., `~/.pm2/logs/my-api-out.log` and `~/.pm2/logs/my-api-error.log`), providing centralized log management on the server.
+
     Install PM2 globally:
 
     ```bash
     npm install pm2 -g
     ```
 
-    Start the application:
+    Start the application and name the process:
 
     ```bash
-    pm2 start dist/index.js --name "my-api"
+    pm2 start dist/src/index.js --name "my-api"
     ```
 
     Your API is now running. You can monitor it with `pm2 list` or `pm2 monit`.
