@@ -65,16 +65,13 @@ const helmetConfig = helmet({
   xssFilter: true,
 });
 
-if (env.NODE_ENV === "development") {
-  helmet({
-    contentSecurityPolicy: false, // Disable CSP in dev
-    crossOriginEmbedderPolicy: false,
-  });
-}
-
 export const apiMiddlewares = [
   helmetConfig,
-  cors({ origin: env.CLIENT_URL, credentials: true }),
+  cors({
+    origin: env.CLIENT_URL,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  }),
   express.json({ limit: "10mb" }),
   express.urlencoded({ extended: true, limit: "10mb" }),
   cookieParser(),

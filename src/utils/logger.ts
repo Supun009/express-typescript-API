@@ -1,17 +1,9 @@
 import pino from "pino";
-import fs from "fs";
-import path from "path";
 import { env } from "../constant/env.js";
 import type { Request } from "express";
 
 const isDevelopment = env.NODE_ENV === "development";
 const isTest = env.NODE_ENV === "test";
-
-// Use project root for logs, which is more standard and robust.
-const logDirectory = path.join(process.cwd(), "logs");
-if (!isDevelopment) {
-  fs.mkdirSync(logDirectory, { recursive: true });
-}
 
 export const logger = pino({
   level: isDevelopment ? "debug" : "info",

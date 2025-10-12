@@ -2,8 +2,11 @@ import z, { email } from "zod";
 
 export const logi = z
   .object({
-    email: z.string().check(email("Invalid email format")),
-    password: z.string().min(6, "Password must be at least 6 characters long"),
+    email: z.string().check(email("Invalid email format")).min(10).max(40),
+    password: z
+      .string()
+      .min(6, "Password must be at least 6 characters long")
+      .max(12),
   })
   .refine((data) => data.password.length >= 6, {
     message: "Password must be at least 6 characters long",
@@ -12,10 +15,14 @@ export const logi = z
 
 export const passwordSchema = z
   .object({
-    password: z.string().min(6, "Password must be at least 6 characters long"),
+    password: z
+      .string()
+      .min(6, "Password must be at least 6 characters long")
+      .max(12),
     confirmPassword: z
       .string()
-      .min(6, "Confirm Password must be at least 6 characters long"),
+      .min(6, "Confirm Password must be at least 6 characters long")
+      .max(12),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -24,12 +31,16 @@ export const passwordSchema = z
 
 export const reg = z
   .object({
-    email: z.string().check(email("Invalid email format")),
-    name: z.string().min(1, "Name is required"),
-    password: z.string().min(6, "Password must be at least 6 characters long"),
+    email: z.string().check(email("Invalid email format")).min(10).max(40),
+    name: z.string().min(1, "Name is required").min(5).max(12),
+    password: z
+      .string()
+      .min(6, "Password must be at least 6 characters long")
+      .max(12),
     confirmPassword: z
       .string()
-      .min(6, "Confirm Password must be at least 6 characters long"),
+      .min(6, "Confirm Password must be at least 6 characters long")
+      .max(12),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
