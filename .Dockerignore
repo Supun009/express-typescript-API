@@ -4,6 +4,7 @@ npm-debug.log
 
 # Build output
 dist
+generated
 
 docs
 .github
@@ -25,4 +26,3 @@ docker-compose.yml
 
 # Docs
 README.md
-
