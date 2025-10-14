@@ -1,6 +1,7 @@
 import request from "supertest";
 import app from "../src/app.js";
 import { getCookies } from "./cookieHelper.js";
+import { response } from "express";
 
 describe("Admin Tests", () => {
   let accessToken: string | undefined;
@@ -72,15 +73,51 @@ describe("Admin Tests", () => {
     expect(response.body.data.name).toBe(updatedName);
   });
 
-  it("should delete users", async () => {
+  it("should get active sessions by user ids", async () => {
     const response = await request(app)
-      .delete("/api/v1/admin/users/delete")
+      .get("/api/v1/admin/active-session")
       .send({ userIds: [userIds[0], userIds[1]] })
       .set("Cookie", [`accessToken=${accessToken}`])
       .expect(200);
 
     expect(response.body).toBeDefined();
-    expect(response.body.message).toBe("Users deleted successfully");
+    expect(Array.isArray(response.body.data)).toBe(true);
+    expect(response.body.data.length).toBe(2);
+  });
+
+  it("should get login history for a user", async () => {
+    const response = await request(app)
+      .get(`/api/v1/admin/users/login-history/${userIds[0]}`)
+      .set("Cookie", [`accessToken=${accessToken}`])
+      .expect(200);
+
+    expect(response.body).toBeDefined();
+    expect(Array.isArray(response.body.data)).toBe(true);
+    expect(response.body.data.length).toBeGreaterThan(0);
+  });
+
+  it("should get suspicious-activity by ip", async () => {
+    const response = await request(app)
+      .get("/api/v1/admin/suspicious-activity")
+      .send({ ip: "::1" })
+      .set("Cookie", [`accessToken=${accessToken}`])
+      .expect(200);
+
+    expect(response.body).toBeDefined();
+    expect(response.body.data).toBe(1);
+  });
+
+  it("should revoke all sessions for a user", async () => {
+    const response = await request(app)
+      .delete("/api/v1/admin/revoke-sessions")
+      .send({ userIds: [userIds[0], userIds[1]] })
+      .set("Cookie", [`accessToken=${accessToken}`])
+      .expect(200);
+
+    expect(accessToken).toBeDefined();
+    expect(response.body.message).toBe(
+      "All sessions revoked successfully by admin",
+    );
   });
 
   it("should delete a user", async () => {
@@ -91,5 +128,16 @@ describe("Admin Tests", () => {
 
     expect(response.body).toBeDefined();
     expect(response.body.message).toBe("User deleted successfully");
+  });
+
+  it("should delete users", async () => {
+    const response = await request(app)
+      .delete("/api/v1/admin/users/delete")
+      .send({ userIds: [userIds[0]] })
+      .set("Cookie", [`accessToken=${accessToken}`])
+      .expect(200);
+
+    expect(response.body).toBeDefined();
+    expect(response.body.message).toBe("Users deleted successfully");
   });
 });

@@ -21,7 +21,7 @@ export const getAllUsers = async () => {
       updatedAt: true,
     },
   });
-
+  console.log(users);
   return users;
 };
 
@@ -142,19 +142,19 @@ export const revokeSessionsByAdmin = async (
         userAgent: context.userAgent || "unknown",
       });
       appAssert(sessions, HttpStatus.NOT_FOUND, "Sessions not found");
+    } else {
+      await createAuditLog({
+        userId: adminId,
+        action: AuditAction.ADMIN_SESSION_REVOKE_SUCCESS,
+        status: "SUCCESS",
+        ipAddress: context.ip || "unknown",
+        userAgent: context.userAgent || "unknown",
+        metadata: {
+          targetUserIds: userIds,
+          ...parseUserAgent(context.userAgent),
+        },
+      });
     }
-
-    await createAuditLog({
-      userId: adminId,
-      action: AuditAction.ADMIN_SESSION_REVOKE_SUCCESS,
-      status: "SUCCESS",
-      ipAddress: context.ip || "unknown",
-      userAgent: context.userAgent || "unknown",
-      metadata: {
-        targetUserIds: userIds,
-        ...parseUserAgent(context.userAgent),
-      },
-    });
   } catch (error) {
     await createAuditLog({
       userId: adminId,
