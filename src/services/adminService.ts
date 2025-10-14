@@ -21,7 +21,6 @@ export const getAllUsers = async () => {
       updatedAt: true,
     },
   });
-  console.log(users);
   return users;
 };
 
