@@ -189,6 +189,33 @@ describe("Admin Tests", () => {
     );
   });
 
+  it("should logged admin for deleteing users", async () => {
+    const response = await request(app)
+      .post("/api/v1/auth/login")
+      .send({
+        email: "admin@example.com",
+        password: "111111",
+      })
+      .expect(200);
+
+    const cookies = getCookies(response);
+    expect(cookies).toBeDefined();
+
+    const accessTokenCookie = cookies.find((cookie: string) =>
+      cookie.startsWith("accessToken="),
+    );
+
+    expect(accessTokenCookie).toBeDefined();
+
+    const accessTokenParts = accessTokenCookie?.split(";")[0]?.split("=") || [];
+
+    if (accessTokenParts.length !== 2) {
+      throw new Error("Login response did not include accessToken cookie");
+    } else {
+      accessToken = accessTokenParts[1];
+    }
+  });
+
   it("should delete a user", async () => {
     expect(testUserId).toBeDefined();
     const response = await request(app)

@@ -23,7 +23,6 @@ export const authMiddleware = asyncHandler(
 
     // Check if the session is still valid in the database
     const session = await findSessionById(decoded.sessionId);
-    console.log(session);
     if (!session) {
       clearCookies(res);
       appAssert(false, HttpStatus.UNAUTHORIZED, "Session not found");
