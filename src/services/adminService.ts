@@ -76,6 +76,12 @@ export const deleteUserById = async (
   userId: string,
   context: RequestContext,
 ) => {
+  const existUser = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  appAssert(existUser, HttpStatus.NOT_FOUND, "User not found");
+
   const deleted = await prisma.user.update({
     where: { id: userId },
     data: {
