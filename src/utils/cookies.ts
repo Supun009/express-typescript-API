@@ -33,3 +33,15 @@ export const setCookies = ({
     .cookie("accessToken", accessToken, getAccesstokenCookieOptions())
     .cookie("refreshToken", refreshToken, getRefreshTokenCookieOptions());
 };
+
+export const clearCookies = (
+  res: Response,
+  cookieType?: "access" | "refresh",
+) => {
+  if (cookieType && cookieType === "access") {
+    return res.clearCookie("accessToken", getAccesstokenCookieOptions());
+  }
+  return res
+    .clearCookie("accessToken", getAccesstokenCookieOptions())
+    .clearCookie("refreshToken", getRefreshTokenCookieOptions());
+};

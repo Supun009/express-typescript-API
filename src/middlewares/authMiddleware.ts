@@ -3,6 +3,9 @@ import { verifyToken, type accessTokenPayload } from "../utils/jwt.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/AppError.js";
 import { HttpStatus } from "../constant/http.js";
+import appAssert from "../utils/appAssert.js";
+import { findSessionById } from "../services/sessionService.js";
+import { clearCookies } from "../utils/cookies.js";
 
 export const authMiddleware = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -16,6 +19,14 @@ export const authMiddleware = asyncHandler(
 
     if (!decoded) {
       throw new AppError(HttpStatus.UNAUTHORIZED, "Invalid access token");
+    }
+
+    // Check if the session is still valid in the database
+    const session = await findSessionById(decoded.sessionId);
+    console.log(session);
+    if (!session) {
+      clearCookies(res);
+      appAssert(false, HttpStatus.UNAUTHORIZED, "Session not found");
     }
 
     // CSRF Protection: For any method that is not 'safe' (GET, HEAD, OPTIONS),

@@ -4,52 +4,54 @@ import type { RequestContext } from "../utils/requestContext.js";
 import appAssert from "../utils/appAssert.js";
 import { HttpStatus } from "../constant/http.js";
 
-export const revokeSessionByID = async (
-  sessionId: string,
-  userId: string,
-  context: RequestContext,
-) => {
+export interface RevokeSessionByIDArgs {
+  sessionId: string;
+  userId: string;
+  context: RequestContext;
+}
+
+export const revokeSessionByID = async (args: RevokeSessionByIDArgs) => {
   try {
     const session = await prisma.session.findFirst({
       where: {
-        id: sessionId,
-        userId, // Ensures a user can only revoke their own session
+        id: args.sessionId,
+        userId: args.userId,
       },
     });
-
     if (!session) {
       await createAuditLog({
-        userId,
+        userId: args.userId,
         action: AuditAction.SESSION_REVOKE_FAILED,
         status: "FAILURE",
         errorMessage: "Session not found or does not belong to user",
-        ipAddress: context.ip || "Unknown",
-        userAgent: context.userAgent || "Unknown",
+        ipAddress: args.context.ip || "Unknown",
+        userAgent: args.context.userAgent || "Unknown",
       });
       appAssert(session, HttpStatus.NOT_FOUND, "Session not found");
     }
 
     await prisma.session.delete({
-      where: { id: sessionId },
+      where: { id: args.sessionId },
     });
 
     await createAuditLog({
-      userId,
-      sessionId,
+      userId: args.userId,
+      sessionId: args.sessionId,
       action: AuditAction.SESSION_REVOKE_SUCCESS,
       status: "SUCCESS",
-      ipAddress: context.ip || "Unknown",
-      userAgent: context.userAgent || "Unknown",
+      ipAddress: args.context.ip || "Unknown",
+      userAgent: args.context.userAgent || "Unknown",
     });
   } catch (error) {
+    console.log(error);
     await createAuditLog({
-      userId,
+      userId: args.userId,
       action: AuditAction.SESSION_REVOKE_FAILED,
       status: "FAILURE",
       errorMessage:
         error instanceof Error ? error.message : "Failed to revoke session",
-      ipAddress: context.ip || "Unknown",
-      userAgent: context.userAgent || "Unknown",
+      ipAddress: args.context.ip || "Unknown",
+      userAgent: args.context.userAgent || "Unknown",
     });
     throw error;
   }
