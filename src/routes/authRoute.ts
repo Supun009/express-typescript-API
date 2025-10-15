@@ -7,6 +7,7 @@ import {
   register,
   resetPassword,
 } from "../controllers/authController.js";
+import { authLimiter } from "../middlewares/rateLimitter.js";
 
 const authRouter = Router();
 
@@ -41,7 +42,7 @@ const authRouter = Router();
  *                   type: string
  *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.0LfQIWnxy4M8JnhybC1qnpHdJO1QRFp9MKnjuyZT1iFQpGF0aW9uZXhwPQkDMFpmw9Ij68UAx1jppr6FoAIbJnV2a3Mw
  */
-authRouter.post("/login", login);
+authRouter.post("/login", authLimiter, login);
 
 /**
  * @swagger
@@ -72,7 +73,7 @@ authRouter.post("/login", login);
  *       201:
  *         description: User registered successfully
  */
-authRouter.post("/register", register);
+authRouter.post("/register", authLimiter, register);
 
 /**
  * @swagger
@@ -96,7 +97,7 @@ authRouter.post("/logout", logout);
  *       200:
  *         description: Token refreshed
  */
-authRouter.get("/refresh", refresUserToken);
+authRouter.get("/refresh", authLimiter, refresUserToken);
 
 /**
  * @swagger
@@ -118,7 +119,7 @@ authRouter.get("/refresh", refresUserToken);
  *       200:
  *         description: Password reset link sent to user email
  */
-authRouter.post("/forgot-password", getResetToken);
+authRouter.post("/forgot-password", authLimiter, getResetToken);
 
 /**
  * @swagger
@@ -149,6 +150,6 @@ authRouter.post("/forgot-password", getResetToken);
  *       200:
  *         description: Password reset successfully
  */
-authRouter.post("/reset-password", resetPassword);
+authRouter.post("/reset-password", authLimiter, resetPassword);
 
 export default authRouter;
