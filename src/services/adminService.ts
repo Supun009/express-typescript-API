@@ -107,7 +107,7 @@ export const deleteUsers = async (
     },
   });
 
-  appAssert(deleted, HttpStatus.NOT_FOUND, "Users not found");
+  appAssert(deleted.count > 0, HttpStatus.NOT_FOUND, "Users not found");
 
   await createAuditLog({
     userId: adminId,
