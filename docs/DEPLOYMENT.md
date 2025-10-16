@@ -69,3 +69,15 @@ This guide provides instructions for deploying the application to a production e
     ```
 
     Your API is now running. You can monitor it with `pm2 list` or `pm2 monit`.
+
+## API Documentation
+
+This project uses Swagger to provide interactive API documentation. The documentation is automatically generated from the JSDoc comments in the route files.
+
+To generate the documentation, run the following command:
+
+```bash
+npm run swagger-gen
+```
+
+This will create a `swagger_output.json` file in the root of the project. The documentation will be available at the `/api-docs` endpoint.

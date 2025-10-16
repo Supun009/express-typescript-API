@@ -12,30 +12,66 @@ This is a robust and scalable REST API built with Node.js, Express.js, and TypeS
 - **[Architecture Overview](./docs/ARCHITECTURE.md)**: An in-depth look at the project structure and design patterns.
 - **[Deployment Guide](./docs/DEPLOYMENT.md)**: Instructions for deploying the application to production.
 - **[Contributing Guide](./CONTRIBUTING.md)**: How to contribute to the project.
+- **[Folder Structure](./docs/folder_structure.md)**: An overview of the project's folder structure.
 
 ## ✨ Features
 
-- **Authentication**: Secure user registration and login using JWT (JSON Web Tokens).
-- **Access & Refresh Tokens**: Implements a secure token-based authentication flow with access and refresh tokens stored in HTTP-only cookies.
-- **Password Management**: Secure password hashing using bcrypt, with endpoints for changing and resetting passwords.
-- **Role-Based Access Control (RBAC)**: Middleware to protect routes based on user roles (e.g., `ADMIN` vs. `USER`).
-- **User Management**:
-  - Users can view and update their own profiles.
-  - Admins can perform CRUD operations on all users.
-- **Validation**: Strong, type-safe request validation using Zod.
-- **Structured & Scalable**: Organized project structure with controllers, services, DTOs, and utility functions.
-- **Async Error Handling**: A custom `asyncHandler` utility to gracefully handle errors in asynchronous route handlers.
-- **TypeScript**: Full TypeScript support for type safety and improved developer experience.
+- **Authentication & Authorization**: Secure, cookie-based authentication with JWT (Access and Refresh tokens). Includes role-based access control (RBAC) for protecting routes.
+- **User Management**: Complete CRUD operations for users, with secure password handling (hashing with bcrypt).
+- **Session Management**: Users can view and revoke their active sessions.
+- **Security**:
+  - **CORS**: Configured to allow requests only from whitelisted domains.
+  - **Helmet**: Protects against common web vulnerabilities.
+  - **Rate Limiting**: Guards against brute-force attacks.
+  - **HTTP-Only Cookies**: For storing tokens, preventing XSS attacks.
+- **Request Validation**: Strong, type-safe validation using Zod.
+- **Database**: Uses Prisma ORM for type-safe database access and schema management.
+- **Logging**: Structured, asynchronous logging with Pino.
+- **Error Handling**: Centralized error handling middleware.
+- **API Documentation**: Automatically generated API documentation with Swagger.
+- **Developer Experience**:
+  - **TypeScript**: For type safety and improved code quality.
+  - **ESLint & Prettier**: For consistent code style.
+  - **Hot-reloading**: For a fast development workflow.
+  - **Dockerized**: For easy setup and deployment.
 
 ## 🛠️ Tech Stack
 
 - **Backend**: Node.js, Express.js
 - **Language**: TypeScript
-- **Authentication**: JSON Web Tokens (JWT)
-- **Password Hashing**: Bcrypt
-- **Validation**: Zod
-- **ORM**: Prisma
 - **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Authentication**: JWT (JSON Web Tokens)
+- **Validation**: Zod
+- **Logging**: Pino
+- **API Documentation**: Swagger
+- **Testing**: Jest, Supertest
+
+## Folder Structure
+
+The project follows a feature-based architecture, with a clear separation of concerns. For a detailed overview, see the [Folder Structure](./docs/folder_structure.md) documentation.
+
+```
+/
+├── docs/                  # Documentation files
+├── prisma/                # Database schema and migrations
+├── src/
+│   ├── config/            # Configuration files (e.g., database)
+│   ├── constants/         # Project-wide constants
+│   ├── controllers/       # Express route handlers
+│   ├── dtos/              # Data Transfer Objects (for request/response validation)
+│   ├── middlewares/       # Custom Express middlewares
+│   ├── routes/            # Express routes
+│   ├── services/          # Business logic
+│   ├── types/             # Custom type definitions
+│   └── utils/             # Utility functions
+├── tests/                 # Test files
+├── .env.example           # Example environment variables
+├── docker-compose.yml     # Docker Compose configuration
+├── Dockerfile             # Dockerfile for the application
+├── package.json           # Project dependencies and scripts
+└── tsconfig.json          # TypeScript configuration
+```
 
 ## Getting Started
 
@@ -46,6 +82,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 - Node.js (v18.x or newer recommended)
 - npm or yarn
 - A running PostgreSQL database instance
+- Docker (optional, for running with Docker)
 
 ### Installation
 
@@ -71,15 +108,15 @@ Follow these instructions to get a copy of the project up and running on your lo
 
     Then, open the `.env` file and fill in the required values.
 
-    | Variable             | Description                                          | Example                                                        |
-    | -------------------- | ---------------------------------------------------- | -------------------------------------------------------------- |
-    | `DATABASE_URL`       | Your full PostgreSQL connection string.              | `postgresql://postgres:mysecretpassword@localhost:5432/mydb`   |
-    | `CLIENT_URL`         | The client origin allowed to access the API.         | `http://localhost:3001`                                        |
-    | `NODE_ENV`           | The environment in which the application is running. | `development` or `production`                                  |
-    | `LOG_LEVEL`          | The log level for the application.                   | `info`                                                         |
-    | `PORT`               | The port the application will run on.                | `3000`                                                         |
-    | `ACCESS_JWT_SECRET`  | Secret key for signing JWT access tokens.            | `your_super_secret_access_token_key_min_32_chars_long_abc123`  |
-    | `REFRESH_JWT_SECRET` | Secret key for signing JWT refresh tokens.           | `your_super_secret_refresh_token_key_min_32_chars_long_xyz789` |
+| Variable | Description | Example |
+| :--- | :--- | :--- |
+| `DATABASE_URL` | Your full PostgreSQL connection string. | `postgresql://postgres:mysecretpassword@localhost:5432/mydb` |
+| `CLIENT_URL` | The client origin allowed to access the API. | `http://localhost:3001` |
+| `NODE_ENV` | The environment in which the application is running. | `development` or `production` |
+| `LOG_LEVEL` | The log level for the application. | `info` |
+| `PORT` | The port the application will run on. | `3000` |
+| `ACCESS_JWT_SECRET` | Secret key for signing JWT access tokens. | `your_super_secret_access_token_key_min_32_chars_long_abc123` |
+| `REFRESH_JWT_SECRET` | Secret key for signing JWT refresh tokens. | `your_super_secret_refresh_token_key_min_32_chars_long_xyz789` |
 
 4.  **Apply Database Migrations:**
     Make sure your PostgreSQL database server is running and the `DATABASE_URL` in your `.env` file is correct. Then, run the following command to apply the database schema:
@@ -90,36 +127,36 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 ### Running the Application
 
-1.  **Compile TypeScript:**
+1.  **Start the server in development mode (with hot-reloading):**
+
+    ```bash
+    npm run dev
+    ```
+
+    The API will be available at `http://localhost:3000` (or the `PORT` you specified).
+
+2.  **Build and run for production:**
 
     ```bash
     npm run build
-    ```
-
-2.  **Start the server:**
-
-    ```bash
     npm start
     ```
 
-3.  **Run in development mode (with hot-reloading):**
-    `bash
-npm run dev
-`
-    The API will be available at `http://localhost:3000` (or the `PORT` you specified).
+### API Documentation
+
+This project uses Swagger to provide interactive API documentation. Once the server is running, you can access the documentation at `http://localhost:3000/api-docs`.
+
+The Swagger documentation is automatically generated from the JSDoc comments in the route files. To regenerate the documentation, run the following command:
+
+```bash
+npm run swagger-gen
+```
 
 ### Running with Docker
 
 You can also run this application using Docker and Docker Compose.
 
-1.  **Prerequisites:**
-    - [Docker](https://docs.docker.com/get-docker/)
-    - [Docker Compose](https://docs.docker.com/compose/install/)
-
-2.  **Docker-compose.yml:**
-    Our `docker-compose.yml` is set up for development and includes a PostgreSQL database service.
-
-3.  **Build and Run:**
+1.  **Build and Run:**
     Once you've configured the environment variables, you can build and run the application with a single command:
 
     ```bash
@@ -131,14 +168,14 @@ You can also run this application using Docker and Docker Compose.
     - Start the PostgreSQL database and the application in detached mode (`-d`).
     - The API will be available at `http://localhost:3000`.
 
-4.  **Database Migrations:**
+2.  **Database Migrations:**
     When the application starts, it will automatically connect to the database. To run the database migrations, you can execute the following command in a separate terminal:
 
     ```bash
     docker-compose exec node-app npx prisma migrate dev
     ```
 
-5.  **Stopping the Application:**
+3.  **Stopping the Application:**
     To stop and remove the containers, run:
     ```bash
     docker-compose down
@@ -147,13 +184,13 @@ You can also run this application using Docker and Docker Compose.
 
 ## 🧪 Testing
 
-This project uses Jest for running unit and integration tests. To run the test suite, use the following commands:
+This project uses Jest for running unit and integration tests. To run the test suite, use the following command:
 
 ```bash
 npm run test
 ```
 
-this will run all tests together.
+This will run all tests together.
 
 ## 🤝 Contributing
 

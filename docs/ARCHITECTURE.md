@@ -55,8 +55,28 @@ The application is divided into several distinct layers, each with a specific re
 
 - **Responsibility**: A collection of reusable helper functions and classes used across the application.
 - **Key Utilities**:
+  - `apiResponse.ts`: Provides a standardized format for API responses, including success, error, and paginated responses.
+  - `appAssert.ts`: A utility for making assertions in the application. If an assertion fails, it throws an `AppError` with a specified HTTP status code and message.
+  - `AppError.ts`: A custom error class for handling operational errors. It extends the built-in `Error` class and adds a `statusCode` property.
   - `asyncHandler.ts`: A wrapper for async route handlers to automatically catch errors and pass them to the global error handler.
-  - `apiResponse.ts`: Standardized success/error response formatters.
-  - `AppError.ts`: A custom error class for handling operational errors.
+  - `authValidator.ts`: Contains Zod schemas for validating authentication-related data, such as login and registration data.
+  - `cookies.ts`: Provides functions for setting and clearing HTTP-only cookies for access and refresh tokens.
+  - `hashPassword.ts`: Provides functions for hashing and comparing passwords using bcrypt.
+  - `hashToken.ts`: Provides functions for hashing and comparing tokens using bcrypt.
+  - `jwt.ts`: Provides functions for creating and verifying JSON Web Tokens (JWTs).
   - `logger.ts`: A robust logger using `pino`. It writes structured JSON logs to `stdout` in production. This approach is ideal for containerized environments where logs are treated as event streams and collected by the platform (e.g., Google Cloud Logging, Datadog).
-  - `jwt.ts`: Functions for signing and verifying JWTs.
+  - `requestContext.ts`: Provides functions for getting and parsing request context information, such as the user's IP address, user agent, and request ID.
+  - `sanitizer.ts`: Provides a function for sanitizing string inputs by trimming whitespace and limiting their length.
+
+### 8. API Documentation (Swagger)
+
+- **Responsibility**: Generates API documentation from JSDoc comments in the route files.
+- `swagger-autogen.ts`: The script that generates the `swagger_output.json` file.
+- `swagger_output.json`: The generated Swagger documentation.
+- `swagger-ui-express`: The middleware that serves the Swagger UI.
+
+### 9. Security
+
+- **Responsibility**: Provides security-related features.
+- `securityService.ts`: Contains the logic for session management.
+- `auditService.ts`: Contains the logic for logging audit trails.

@@ -73,8 +73,29 @@ When you're ready to contribute code, please follow these steps:
 
     Common types include: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`.
 
-7.  **Push your branch** to your fork and **open a pull request** against the `main` branch of the original repository.
+7.  **Format and lint your code.** Before committing, please run the following commands to format and lint your code:
 
-8.  **Address review comments.** A maintainer will review your pull request. Please be responsive to any feedback and make the necessary changes. Once your PR is approved, it will be merged.
+    ```bash
+    npm run format
+    npm run lint
+    ```
+
+8.  **Push your branch** to your fork and **open a pull request** against the `main` branch of the original repository.
+
+9.  **Address review comments.** A maintainer will review your pull request. Please be responsive to any feedback and make the necessary changes. Once your PR is approved, it will be merged.
+
+## Swagger Documentation
+
+We use Swagger to automatically generate API documentation from JSDoc comments in the route files. If you are adding or updating a route, please make sure to update the JSDoc comments accordingly.
+
+To regenerate the documentation, run the following command:
+
+```bash
+npm run swagger-gen
+```
+
+## Security and Audit
+
+We have `security` and `audit` services to handle session management and audit logging. If you are making changes that affect security or user activity, please make sure to use these services appropriately.
 
 Thank you for your contribution!
