@@ -64,6 +64,10 @@ describe("User Tests", () => {
     expect(response.body.data.name).toBe(testObject.name);
   });
 
+  it("should not get user profile without access token", async () => {
+    await request(app).get("/api/v1/user/profile").expect(401);
+  });
+
   it("should update user profile", async () => {
     if (!accessToken) {
       throw new Error("Access token is not defined");
@@ -81,6 +85,29 @@ describe("User Tests", () => {
     expect(response.body.data.name).toBe(updatedName);
   });
 
+  it("should not update user profile without access token", async () => {
+    await request(app)
+      .put("/api/v1/user/update")
+      .send({
+        name: updatedName,
+      })
+      .expect(401);
+  });
+
+  it("should not update user profile with invalid data", async () => {
+    if (!accessToken) {
+      throw new Error("Access token is not defined");
+    }
+
+    await request(app)
+      .put("/api/v1/user/update")
+      .set("Cookie", [`accessToken=${accessToken}`])
+      .send({
+        name: "",
+      })
+      .expect(400);
+  });
+
   it("should change user password", async () => {
     if (!accessToken) {
       throw new Error("Access token is not defined");
@@ -95,5 +122,64 @@ describe("User Tests", () => {
         confirmNewPassword: newConfirmPassword,
       })
       .expect(200);
+  });
+
+  it("should not change user password without access token", async () => {
+    await request(app)
+      .post("/api/v1/user/changepassword")
+      .send({
+        oldPassword: testObject.newPassword,
+        newPassword: newPassword,
+        confirmNewPassword: newConfirmPassword,
+      })
+      .expect(401);
+  });
+
+  it("should not change user password with incorrect old password", async () => {
+    if (!accessToken) {
+      throw new Error("Access token is not defined");
+    }
+
+    await request(app)
+      .post("/api/v1/user/changepassword")
+      .set("Cookie", [`accessToken=${accessToken}`])
+      .send({
+        oldPassword: "incorrectpassword",
+        newPassword: newPassword,
+        confirmNewPassword: newConfirmPassword,
+      })
+      .expect(401);
+  });
+
+  it("should not change user password with same new password", async () => {
+    if (!accessToken) {
+      throw new Error("Access token is not defined");
+    }
+
+    await request(app)
+      .post("/api/v1/user/changepassword")
+      .set("Cookie", [`accessToken=${accessToken}`])
+      .send({
+        oldPassword: testObject.newPassword,
+        newPassword: testObject.newPassword,
+        confirmNewPassword: testObject.newPassword,
+      })
+      .expect(400);
+  });
+
+  it("should not change user password with mismatched new passwords", async () => {
+    if (!accessToken) {
+      throw new Error("Access token is not defined");
+    }
+
+    await request(app)
+      .post("/api/v1/user/changepassword")
+      .set("Cookie", [`accessToken=${accessToken}`])
+      .send({
+        oldPassword: testObject.newPassword,
+        newPassword: newPassword,
+        confirmNewPassword: "differentpassword",
+      })
+      .expect(400);
   });
 });

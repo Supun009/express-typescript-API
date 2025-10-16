@@ -26,6 +26,30 @@ describe("Authentication Tests", () => {
       .expect(201);
   });
 
+  it("should not register with an existing email", async () => {
+    await request(app)
+      .post("/api/v1/auth/register")
+      .send({
+        email: testObject.testEmail,
+        name: testObject.name,
+        password: testObject.password,
+        confirmPassword: testObject.confirmPassword,
+      })
+      .expect(409);
+  });
+
+  it("should not register with mismatched passwords", async () => {
+    await request(app)
+      .post("/api/v1/auth/register")
+      .send({
+        email: "newuser@example.com",
+        name: testObject.name,
+        password: testObject.password,
+        confirmPassword: "differentpassword",
+      })
+      .expect(400);
+  });
+
   it("should login a user", async () => {
     const response = await request(app)
       .post("/api/v1/auth/login")
@@ -60,6 +84,26 @@ describe("Authentication Tests", () => {
     }
   });
 
+  it("should not login with non-existent email", async () => {
+    await request(app)
+      .post("/api/v1/auth/login")
+      .send({
+        email: "nonexistent@example.com",
+        password: testObject.password,
+      })
+      .expect(404);
+  });
+
+  it("should not login with incorrect password", async () => {
+    await request(app)
+      .post("/api/v1/auth/login")
+      .send({
+        email: testObject.testEmail,
+        password: "incorrectpassword",
+      })
+      .expect(400);
+  });
+
   it("should refresh user token", async () => {
     const response = await request(app)
       .get("/api/v1/auth/refresh")
@@ -83,6 +127,13 @@ describe("Authentication Tests", () => {
     }
   });
 
+  it("should not refresh token with invalid token", async () => {
+    await request(app)
+      .get("/api/v1/auth/refresh")
+      .set("Cookie", [`refreshToken=invalidtoken`])
+      .expect(401);
+  });
+
   it("should logout a user", async () => {
     const response = await request(app)
       .post("/api/v1/auth/logout")
@@ -93,6 +144,10 @@ describe("Authentication Tests", () => {
       .expect(200);
 
     expect(response.body.message).toBe("Logout successful");
+  });
+
+  it("should not logout if not logged in", async () => {
+    await request(app).post("/api/v1/auth/logout").expect(401);
   });
 
   it("should login a user", async () => {
@@ -143,6 +198,15 @@ describe("Authentication Tests", () => {
     resetToken = response.body.data;
   });
 
+  it("should not get reset password token for non-existent email", async () => {
+    await request(app)
+      .post("/api/v1/auth/forgot-password")
+      .send({
+        email: "nonexistent@example.com",
+      })
+      .expect(404);
+  });
+
   it("should reset password", async () => {
     const response = await request(app)
       .post("/api/v1/auth/reset-password")
@@ -163,5 +227,29 @@ describe("Authentication Tests", () => {
         expect.stringContaining("refreshToken=;"), // cleared
       ]),
     );
+  });
+
+  it("should not reset password with invalid token", async () => {
+    await request(app)
+      .post("/api/v1/auth/reset-password")
+      .send({
+        token: "invalidtoken",
+        id: resetToken.id,
+        password: testObject.newPassword,
+        confirmPassword: testObject.newPassword,
+      })
+      .expect(401);
+  });
+
+  it("should not reset password with mismatched passwords", async () => {
+    await request(app)
+      .post("/api/v1/auth/reset-password")
+      .send({
+        token: resetToken.resetToken,
+        id: resetToken.id,
+        password: testObject.newPassword,
+        confirmPassword: "differentpassword",
+      })
+      .expect(400);
   });
 });

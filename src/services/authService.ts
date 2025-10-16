@@ -383,14 +383,13 @@ export const resetUserPassword = async (
     await createAuditLog({
       action: AuditAction.PASSWORD_RESET_FAILED,
       status: "FAILURE",
-      errorMessage: "Reset token not found",
+      errorMessage: "Invalid or expired reset token",
       ipAddress: context.ip || "Unknown",
       userAgent: context.userAgent || "Unknown",
       metadata: parseUserAgent(context.userAgent),
     });
+    appAssert(passwordReset, HttpStatus.UNAUTHORIZED, "Invalid or expired reset token");
   }
-
-  appAssert(passwordReset, HttpStatus.NOT_FOUND, "Reset token not found");
 
   const cryptoHash = crypto.createHash("sha256").update(token).digest("hex");
 

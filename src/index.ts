@@ -5,7 +5,9 @@ import { logger } from "./utils/logger.js";
 const port = env.PORT;
 
 const server = app.listen(port, () => {
-  logger.info(`Server is running at http://localhost:${port}`);
+  logger.info(
+    `Server is running in ${env.NODE_ENV} at http://localhost:${port}`,
+  );
   connectDB();
 });
 
